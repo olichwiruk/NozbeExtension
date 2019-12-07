@@ -126,7 +126,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (e.target.classList.contains('projectLink')) {
       openProject(e.target.id, e.target.innerHTML)
     } else if (e.target.classList.contains('btnSend')) {
-      const taskName = document.querySelector(".project .name").value
+      let taskName = document.querySelector(".project .name").value
+      if (projectId == 'next_action') { taskName += " #!" }
+
       const reqAddTask = new XMLHttpRequest();
       reqAddTask.open("POST", `${url}/task`, false);
       reqAddTask.setRequestHeader("AUTHORIZATION", token);
