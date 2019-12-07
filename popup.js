@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reqProjectList.onreadystatechange = () => {
       if(reqProjectList.status == 200){
         const projects = JSON.parse(reqProjectList.responseText).map(p => {
-          return { id: p.id, name: p.name }
+          return { id: p.id, name: p.name, color: p._color }
         })
 
         const ul = document.createElement('ul')
@@ -43,6 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
           ul.appendChild(li)
           li.id = p.id
           li.classList.add('projectLink')
+          if (p.color.length != 0) {
+            li.classList.add(`x${p.color}`)
+          }
           li.innerHTML = li.innerHTML + p.name
         })
         const projectListResult = document.querySelector(".projectList .result")
@@ -75,7 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (reqProject.readyState == 4) {
         if(reqProject.status == 200){
-          console.log(reqProject.responseText)
           JSON.parse(reqProject.responseText)
             .sort((a, b) => {
               if (a.completed < b.completed) { return -1 }
@@ -108,7 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
       reqTask.setRequestHeader("AUTHORIZATION", token);
       reqTask.onreadystatechange = () => {
         if(reqTask.status == 200) {
-          e.target.classList.toggle('completed').toggle('todo')
+          e.target.classList.toggle('completed')
+          e.target.classList.toggle('todo')
         } else {
           alert(reqTask.responseText)
         }

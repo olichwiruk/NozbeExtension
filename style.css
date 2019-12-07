@@ -1,0 +1,83 @@
+body {
+  min-width: 300px;
+  min-height: 250px;
+  background-color: #fafafa;
+  color: #151515;
+}
+.header {
+  display: flex;
+  justify-content: center;
+}
+.header .title {
+  margin: 0;
+}
+li {
+  padding: 2px 0;
+  cursor: pointer;
+}
+li.projectLink {
+  list-style-type: none;
+  padding: 8px 10px;
+  font-size: 14px;
+}
+li.projectLink:before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 7px;
+  -moz-border-radius: 7.5px;
+  -webkit-border-radius: 7.5px;
+  border-radius: 7.5px;
+  background-color: #3d4047;
+}
+
+li.task {
+  list-style-type: none;
+  padding: 10px 15px;
+  border-bottom: 1px solid;
+}
+li.task:nth-child(1) {
+  border-top: 1px solid #dadada;
+}
+li.todo {
+  background-color: #ffffff;
+  border-color: #dadada;
+}
+li.completed {
+  text-decoration: line-through;
+  color: #848484;
+  background-color: #f9f9f9;
+  border-color: #e7e7e7;
+}
+.project {
+  display: none;
+}
+input {
+  box-sizing: border-box;
+  padding: 5px 5px;
+  width: 100%;
+  color: #151515;
+  border: 1px solid #c7c7c7;
+  border-radius: 3px;
+}
+input:focus {
+  outline-color: #61ca59;
+}
+
+
+li.projectLink.x84ecaf:before { background-color: #84ecaf; }
+li.projectLink.xcddc39:before { background-color: #cddc39; }
+li.projectLink.x29e271:before { background-color: #29e271; }
+li.projectLink.xaeb4bf:before { background-color: #aeb4bf; }
+li.projectLink.x65808E:before { background-color: #65808E; }
+li.projectLink.x7ADBEC:before { background-color: #7ADBEC; }
+li.projectLink.x00B0FF:before { background-color: #00b0ff; }
+li.projectLink.xffc24a:before { background-color: #ffc24a; }
+li.projectLink.xFF9800:before { background-color: #FF9800; }
+li.projectLink.xedcf9a:before { background-color: #edcf9a; }
+li.projectLink.xc96d3f:before { background-color: #c96d3f; }
+li.projectLink.xff947f:before { background-color: #ff947f; }
+li.projectLink.xFF5252:before { background-color: #FF5252; }
+li.projectLink.xFF61CF:before { background-color: #FF61CF; }
+li.projectLink.xC555F9:before { background-color: #C555F9; }
