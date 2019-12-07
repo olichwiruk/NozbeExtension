@@ -32,6 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
         })
 
         const ul = document.createElement('ul')
+        const liNextAction = document.createElement('li')
+        ul.appendChild(liNextAction)
+        liNextAction.id = "next_action"
+        liNextAction.classList.add('projectLink')
+        liNextAction.innerHTML = liNextAction.innerHTML + "Priorytety"
+
         projects.forEach(p => {
           const li = document.createElement('li')
           ul.appendChild(li)
@@ -57,7 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector(".project .name").focus()
 
     const reqProject = new XMLHttpRequest();
-    reqProject.open("GET", `${url}/tasks?type=project&id=${id}`, true);
+    if (id == "next_action") {
+      reqProject.open("GET", `${url}/tasks?type=next_action`, true);
+    } else {
+      reqProject.open("GET", `${url}/tasks?type=project&id=${id}`, true);
+    }
+
     reqProject.setRequestHeader("AUTHORIZATION", token);
     reqProject.onreadystatechange = () => {
       const ul = document.createElement('ul')
