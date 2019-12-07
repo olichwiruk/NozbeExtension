@@ -1,0 +1,21 @@
+{
+  "manifest_version": 2,
+
+  "name": "Nozbe Plugin",
+  "description": "",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "nozbe-icon.png",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "scripts": ["popup.js", "login.js"]
+  },
+  "options_page": "options.html",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "identity"
+  ]
+}

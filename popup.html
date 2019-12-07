@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Nozbe</title>
+    <script src="popup.js"></script>
+  <style>
+  body {
+    min-width: 200px;
+    min-height: 250px;
+  }
+  li {
+    padding: 2px 0;
+    cursor: pointer;
+  }
+  li.completed {
+    list-style-type: circle;
+    text-decoration: line-through;
+  }
+  li.todo {
+    list-style-type: dist;
+  }
+  .project {
+    display: none;
+  }
+  input:focus {
+    outline-color: #61ca59;
+  }
+  </style>
+  </head>
+  <body>
+    <h1 class="title">Nozbe</h1>
+    <div class="projectList">
+      <button class="btnLogout">Logout</button>
+      <div class="result"></div>
+    </div>
+    <div class="project">
+      <h2 class="projectName"></h2>
+      <form>
+        <input placeholder="Add task..." type="text" class="name"></input>
+        <button style="display: none" class="btnSend"></button>
+      </form>
+      <br>
+      <div class="result"></div>
+    </div>
+  </body>
+</html>
