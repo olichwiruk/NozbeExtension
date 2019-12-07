@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reqProjectList.onreadystatechange = () => {
       if(reqProjectList.status == 200){
         const projects = JSON.parse(reqProjectList.responseText).map(p => {
-          return { id: p.id, name: p.name, color: p._color }
+          return { id: p.id, name: p.name, color: p._color, sort: p._sort }
         })
 
         const ul = document.createElement('ul')
@@ -38,6 +38,11 @@ document.addEventListener('DOMContentLoaded', () => {
         liNextAction.classList.add('projectLink')
         liNextAction.innerHTML = liNextAction.innerHTML + "Priorytety"
 
+        projects.sort((a, b) => {
+          if ( b.sort == 0 || a.sort > b.sort ){ return 1; }
+          if ( a.sort == 0 || a.sort < b.sort ){ return -1; }
+          return 0;
+        })
         projects.forEach(p => {
           const li = document.createElement('li')
           ul.appendChild(li)
