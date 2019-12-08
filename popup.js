@@ -129,13 +129,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const taskId = target.id
       const completed = !target.classList.contains('completed')
       const reqTask = new XMLHttpRequest();
+      target.classList.toggle('completed')
+      target.classList.toggle('todo')
       reqTask.open("PUT", `${url}/task`, true);
       reqTask.setRequestHeader("AUTHORIZATION", token);
       reqTask.onreadystatechange = () => {
-        if(reqTask.status == 200) {
+        if(reqTask.status != 200) {
           target.classList.toggle('completed')
           target.classList.toggle('todo')
-        } else {
           alert(reqTask.responseText)
         }
       }
@@ -144,12 +145,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const taskId = e.target.parentElement.id
       const next = !e.target.classList.contains('next')
       const reqNextAction = new XMLHttpRequest();
+      e.target.classList.toggle('next')
       reqNextAction.open("PUT", `${url}/task`, true);
       reqNextAction.setRequestHeader("AUTHORIZATION", token);
       reqNextAction.onreadystatechange = () => {
-        if(reqNextAction.status == 200) {
+        if(reqNextAction.status != 200) {
           e.target.classList.toggle('next')
-        } else {
           alert(reqNextAction.responseText)
         }
       }
