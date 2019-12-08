@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const url = "https://api.nozbe.com:3000"
+  const nozbeAppHref = "https://app.nozbe.com"
   const client_id = "648e384ad16f95a1a762bfc420580a5d96aaa08e"
   let token
 
@@ -144,6 +145,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (e.target.classList.contains('btnLogout')) {
       chrome.storage.sync.set({ token: null })
       document.querySelector(".projectList .result").innerHTML = "Loged out"
+    } else if (e.target.classList.contains('title')) {
+      chrome.tabs.create({ url: nozbeAppHref });
+    } else if (e.target.classList.contains('projectName')) {
+      chrome.tabs.create({ url: `${nozbeAppHref}/#projects-${projectId}`});
     }
   })
 });

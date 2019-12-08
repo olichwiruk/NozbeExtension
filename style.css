@@ -49,8 +49,14 @@ body {
 }
 
 .header .title {
+  cursor: pointer;
   margin: 0;
 }
+.projectName {
+  margin: 8px 0;
+  cursor: pointer;
+}
+
 li {
   padding: 2px 0;
   cursor: pointer;
