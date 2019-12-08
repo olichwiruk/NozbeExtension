@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reqProjectList.onreadystatechange = () => {
       if(reqProjectList.status == 200){
         const projects = JSON.parse(reqProjectList.responseText).map(p => {
-          return { id: p.id, name: p.name, color: p._color, sort: p._sort }
+          return { id: p.id, name: p.name, color: p._color, sort: p._sort, shared: p._shared == "y"}
         })
 
         const ul = document.createElement('ul')
@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ul.appendChild(li)
           li.id = p.id
           li.classList.add('projectLink')
+          if (p.shared) { li.classList.add('shared') }
           if (p.color.length != 0) {
             li.classList.add(`x${p.color}`)
           }

@@ -87,6 +87,10 @@ li.projectLink:before {
   background-color: #3d4047;
 }
 
+li.projectLink.shared {
+  font-weight: 600;
+}
+
 li.task {
   list-style-type: none;
   padding: 10px 15px;
