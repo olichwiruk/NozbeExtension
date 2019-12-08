@@ -44,8 +44,17 @@ body {
   transform-origin: right top;
 }
 .btnLogout {
-  width: 17px;
+  border: 1px solid #575757;
+  border-radius: 2px;
+  color: #575757;
+  background-color: rgba(0, 0, 0, .1);
+  font-size: 11px;
   height: 100%;
+}
+.btnLogout:hover {
+  color: #171717;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, .2);
 }
 
 .header .title {
