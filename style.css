@@ -95,6 +95,8 @@ li.task {
   list-style-type: none;
   padding: 10px 15px;
   border-bottom: 1px solid;
+  display: flex;
+  justify-content: space-between;
 }
 li.task:nth-child(1) {
   border-top: 1px solid #dadada;
@@ -123,7 +125,57 @@ input {
 input:focus {
   outline-color: #61ca59;
 }
-
+li.task .star {
+  margin: 5px 0;
+  position: relative;
+  display: block;
+  color: #61ca59;
+  width: 0px;
+  height: 0px;
+  border-right: 10px solid transparent;
+  border-bottom: 7px solid;
+  border-bottom-color: #dadada;
+  border-left: 10px solid transparent;
+  transform: rotate(35deg);
+}
+li.task .star:before {
+  border-bottom: 8px solid;
+  border-bottom-color: #dadada;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  position: absolute;
+  height: 0;
+  width: 0;
+  top: -5px;
+  left: -6px;
+  display: block;
+  content: '';
+  transform: rotate(-35deg);
+}
+li.task .star:after {
+  position: absolute;
+  display: block;
+  color: #61ca59;
+  top: 0px;
+  left: -10px;
+  width: 0px;
+  height: 0px;
+  border-right: 10px solid transparent;
+  border-bottom: 7px solid;
+  border-bottom-color: #dadada;
+  border-left: 10px solid transparent;
+  transform: rotate(-70deg);
+  content: '';
+}
+li.task .star.next {
+  border-bottom-color: #61ca59;
+}
+li.task .star.next:before {
+  border-bottom-color: #61ca59;
+}
+li.task .star.next:after {
+  border-bottom-color: #61ca59;
+}
 
 li.projectLink.x84ecaf:before { background-color: #84ecaf; }
 li.projectLink.xcddc39:before { background-color: #cddc39; }

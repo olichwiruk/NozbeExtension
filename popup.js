@@ -93,11 +93,19 @@ document.addEventListener('DOMContentLoaded', () => {
               return 0
             }).forEach(t => {
               const li = document.createElement('li')
+              const content = document.createElement('div')
+              const star = document.createElement('div')
+              star.classList.add('star')
+              li.appendChild(content)
+              li.appendChild(star)
               ul.appendChild(li)
               li.id = t.id
               li.classList.add('task')
+              if (t.next) {
+                star.classList.add('next')
+              }
               li.classList.add(t.completed ? 'completed' : 'todo')
-              li.innerHTML = li.innerHTML + t.name
+              content.innerHTML = t.name
             })
           const projectResult = document.querySelector(".project .result")
           projectResult.innerHTML = ul.innerHTML
@@ -110,21 +118,42 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('task')) {
-      const taskId = e.target.id
-      const completed = !e.target.classList.contains('completed')
+    if ((e.target.classList.contains('task') || 
+         e.target.parentElement.classList.contains('task')) &&
+        !e.target.classList.contains('star')
+    ) {
+      let target = e.target
+      if (e.target.parentElement.classList.contains('task')) {
+        target = e.target.parentElement
+      }
+      const taskId = target.id
+      const completed = !target.classList.contains('completed')
       const reqTask = new XMLHttpRequest();
       reqTask.open("PUT", `${url}/task`, true);
       reqTask.setRequestHeader("AUTHORIZATION", token);
       reqTask.onreadystatechange = () => {
         if(reqTask.status == 200) {
-          e.target.classList.toggle('completed')
-          e.target.classList.toggle('todo')
+          target.classList.toggle('completed')
+          target.classList.toggle('todo')
         } else {
           alert(reqTask.responseText)
         }
       }
       reqTask.send(`id=${taskId}&completed=${completed}`)
+    } else if (e.target.classList.contains('star')) {
+      const taskId = e.target.parentElement.id
+      const next = !e.target.classList.contains('next')
+      const reqNextAction = new XMLHttpRequest();
+      reqNextAction.open("PUT", `${url}/task`, true);
+      reqNextAction.setRequestHeader("AUTHORIZATION", token);
+      reqNextAction.onreadystatechange = () => {
+        if(reqNextAction.status == 200) {
+          e.target.classList.toggle('next')
+        } else {
+          alert(reqNextAction.responseText)
+        }
+      }
+      reqNextAction.send(`id=${taskId}&next=${next}`)
     } else if (e.target.classList.contains('projectLink')) {
       openProject(e.target.id, e.target.innerHTML)
     } else if (e.target.classList.contains('btnSend')) {
