@@ -8,9 +8,15 @@ body {
   display: flex;
   justify-content: space-between;
 }
-.backArrow {
-  vertical-align: middle;
+
+.back {
+  padding-top: 3px;
+  width: 27px;
+  height: 100%;
   cursor: pointer;
+}
+.back .arrow {
+  vertical-align: middle;
   box-sizing: border-box;
   color: #666;
   width: 0;
@@ -19,13 +25,13 @@ body {
   border-style: solid;
   border-bottom-color: transparent;
   border-left-color: transparent;
-  margin: 10px;
+  margin: 5px;
   transform: rotate(-135deg);
 }
-.backArrow.hidden {
+.back .arrow.hidden {
   visibility: hidden;
 }
-.backArrow:before {
+.back .arrow:before {
   content: "";
   box-sizing: border-box;
   right: 0;

@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     projectId = id
     chrome.storage.sync.set({projectId: id, projectName: name})
     document.querySelector(".projectList").style.display = "none"
-    document.querySelector(".backArrow").style.visibility = "visible"
+    document.querySelector(".back .arrow").style.visibility = "visible"
     document.querySelector(".project").style.display = "block"
     document.querySelector(".projectName").innerHTML = name
     document.querySelector(".project .name").focus()
@@ -133,9 +133,10 @@ document.addEventListener('DOMContentLoaded', () => {
       reqAddTask.open("POST", `${url}/task`, false);
       reqAddTask.setRequestHeader("AUTHORIZATION", token);
       reqAddTask.send(`name=${taskName}&project_id=${projectId}`)
-    } else if (e.target.classList.contains('backArrow')) {
+    } else if (e.target.classList.contains('back') ||
+               e.target.parentElement.classList.contains('back')) {
       document.querySelector(".project").style.display = "none"
-      document.querySelector(".backArrow").style.visibility = "hidden"
+      document.querySelector(".back .arrow").style.visibility = "hidden"
       const projectResult = document.querySelector(".project .result")
       projectResult.innerHTML = ""
       chrome.storage.sync.set({projectId: null, projectName: null})
