@@ -10,10 +10,16 @@ body {
 }
 
 .back {
+  visibility: hidden;
   padding-top: 3px;
-  width: 27px;
+  border: 0px;
+  background-color: rgb(0, 0, 0, 0);
+  width: 35px;
   height: 100%;
   cursor: pointer;
+}
+.back:focus {
+  outline:0;
 }
 .back .arrow {
   vertical-align: middle;
