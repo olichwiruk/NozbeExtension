@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reqProjectList.onreadystatechange = () => {
       if(reqProjectList.status == 200){
         const projects = JSON.parse(reqProjectList.responseText).map(p => {
-          return { id: p.id, name: p.name, color: p._color, sort: p._sort, shared: p._shared == "y"}
+          return { id: p.id, name: p.name, color: p._color, sort: p._sort, shared: p._shared == "y", tasksNumber: p._count }
         })
 
         const ul = document.createElement('ul')
@@ -38,6 +38,10 @@ document.addEventListener('DOMContentLoaded', () => {
         liNextAction.id = "next_action"
         liNextAction.classList.add('projectLink')
         liNextAction.innerHTML = liNextAction.innerHTML + "Priorytety"
+        const number = document.createElement('span')
+        number.classList.add('tasksNumber')
+        liNextAction.appendChild(number)
+        calculateNextActionsNumber()
 
         projects.sort((a, b) => {
           if ( b.sort == 0 || a.sort > b.sort ){ return 1; }
@@ -53,7 +57,14 @@ document.addEventListener('DOMContentLoaded', () => {
           if (p.color.length != 0) {
             li.classList.add(`x${p.color}`)
           }
-          li.innerHTML = li.innerHTML + p.name
+          const name = document.createElement('div')
+          name.classList.add('name')
+          name.innerHTML = p.name
+          li.appendChild(name)
+          const number = document.createElement('span')
+          number.classList.add('tasksNumber')
+          number.innerHTML = p.tasksNumber
+          li.appendChild(number)
         })
         const projectListResult = document.querySelector(".projectList .result")
         projectListResult.innerHTML = ul.innerHTML
@@ -62,6 +73,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     reqProjectList.send()
+  }
+
+  const calculateNextActionsNumber = () => {
+    const reqNextActionNumber = new XMLHttpRequest();
+    reqNextActionNumber.open("GET", `${url}/tasks?type=next_action`, true);
+    reqNextActionNumber.setRequestHeader("AUTHORIZATION", token);
+    reqNextActionNumber.onreadystatechange = () => {
+      document.querySelector("li#next_action .tasksNumber")
+        .innerHTML = JSON.parse(reqNextActionNumber.responseText).length
+    }
+    reqNextActionNumber.send()
   }
 
   const openProject = (id, name) => {
@@ -156,8 +178,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       reqNextAction.send(`id=${taskId}&next=${next}`)
-    } else if (e.target.classList.contains('projectLink')) {
-      openProject(e.target.id, e.target.innerHTML)
+    } else if (e.target.classList.contains('projectLink') ||
+               e.target.parentElement.classList.contains('projectLink')) {
+      let target = e.target
+      if (e.target.parentElement.classList.contains('projectLink')) {
+        target = e.target.parentElement
+      }
+      const projectName = target.querySelector(".name").innerHTML
+      openProject(target.id, projectName)
     } else if (e.target.classList.contains('btnSend')) {
       let taskName = document.querySelector(".project .name").value
       if (projectId == 'next_action') { taskName += " #!" }
@@ -175,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
       projectResult.innerHTML = ""
       chrome.storage.sync.set({projectId: null, projectName: null})
       document.querySelector(".projectList").style.display = "block"
+      calculateNextActionsNumber()
     } else if (e.target.classList.contains('btnLogout')) {
       chrome.storage.sync.set({ token: null })
       document.querySelector(".projectList .result").innerHTML = "Loged out"

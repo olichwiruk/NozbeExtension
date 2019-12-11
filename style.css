@@ -81,6 +81,15 @@ li.projectLink {
   padding: 8px 10px;
   font-size: 14px;
 }
+li.projectLink .tasksNumber {
+  float: right;
+  color: #888888;
+  font-weight: 400;
+}
+li.projectLink .name {
+  display: inline-block;
+  margin: 0;
+}
 li.projectLink:before {
   content: '';
   display: inline-block;
