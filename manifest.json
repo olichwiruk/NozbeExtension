@@ -6,7 +6,7 @@
   "version": "1.0",
 
   "browser_action": {
-    "default_icon": "nozbe-icon.png",
+    "default_icon": "nozbe.png",
     "default_popup": "popup.html"
   },
   "background": {

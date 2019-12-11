@@ -3,34 +3,17 @@
   <head>
     <title>Nozbe</title>
     <script src="popup.js"></script>
-  <style>
-  body {
-    min-width: 200px;
-    min-height: 250px;
-  }
-  li {
-    padding: 2px 0;
-    cursor: pointer;
-  }
-  li.completed {
-    list-style-type: circle;
-    text-decoration: line-through;
-  }
-  li.todo {
-    list-style-type: dist;
-  }
-  .project {
-    display: none;
-  }
-  input:focus {
-    outline-color: #61ca59;
-  }
-  </style>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <h1 class="title">Nozbe</h1>
-    <div class="projectList">
+    <div class="header">
+      <button class="back">
+        <div class="arrow hidden"></div>
+      </button>
+      <h1 class="title">Nozbe</h1>
       <button class="btnLogout">Logout</button>
+    </div>
+    <div class="projectList">
       <div class="result"></div>
     </div>
     <div class="project">

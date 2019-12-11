@@ -1,0 +1,213 @@
+body {
+  min-width: 300px;
+  min-height: 250px;
+  background-color: #fafafa;
+  color: #151515;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.back {
+  visibility: hidden;
+  padding-top: 3px;
+  border: 0px;
+  background-color: rgb(0, 0, 0, 0);
+  width: 35px;
+  height: 100%;
+  cursor: pointer;
+}
+.back:focus {
+  outline:0;
+}
+.back .arrow {
+  vertical-align: middle;
+  box-sizing: border-box;
+  color: #666;
+  width: 0;
+  height: 0;
+  border-width: 6px;
+  border-style: solid;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+  margin: 5px;
+  transform: rotate(-135deg);
+}
+.back .arrow.hidden {
+  visibility: hidden;
+}
+.back .arrow:before {
+  content: "";
+  box-sizing: border-box;
+  right: 0;
+  top: -3px;
+  position: absolute;
+  height: 4px;
+  box-shadow: inset 0 0 0 32px;
+  transform: rotate(-45deg);
+  width: 15px;
+  transform-origin: right top;
+}
+.btnLogout {
+  border: 1px solid #575757;
+  border-radius: 2px;
+  color: #575757;
+  background-color: rgba(0, 0, 0, .1);
+  font-size: 11px;
+  height: 100%;
+}
+.btnLogout:hover {
+  color: #171717;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, .2);
+}
+
+.header .title {
+  cursor: pointer;
+  margin: 0;
+}
+.projectName {
+  margin: 8px 0;
+  cursor: pointer;
+}
+
+li {
+  padding: 2px 0;
+  cursor: pointer;
+}
+li.projectLink {
+  list-style-type: none;
+  padding: 8px 10px;
+  font-size: 14px;
+}
+li.projectLink .tasksNumber {
+  float: right;
+  color: #888888;
+  font-weight: 400;
+}
+li.projectLink .name {
+  display: inline-block;
+  margin: 0;
+}
+li.projectLink:before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 7px;
+  -moz-border-radius: 7.5px;
+  -webkit-border-radius: 7.5px;
+  border-radius: 7.5px;
+  background-color: #3d4047;
+}
+li.projectLink:hover:before {
+  width: 12px;
+  height: 12px;
+}
+
+li.projectLink.shared {
+  font-weight: 600;
+}
+
+li.task {
+  list-style-type: none;
+  padding: 10px 15px;
+  border-bottom: 1px solid;
+  display: flex;
+  justify-content: space-between;
+}
+li.task:nth-child(1) {
+  border-top: 1px solid #dadada;
+}
+li.todo {
+  background-color: #ffffff;
+  border-color: #dadada;
+}
+li.completed {
+  text-decoration: line-through;
+  color: #848484;
+  background-color: #f9f9f9;
+  border-color: #e7e7e7;
+}
+.project {
+  display: none;
+}
+input {
+  box-sizing: border-box;
+  padding: 5px 5px;
+  width: 100%;
+  color: #151515;
+  border: 1px solid #c7c7c7;
+  border-radius: 3px;
+}
+input:focus {
+  outline-color: #61ca59;
+}
+li.task .star {
+  margin: 5px 0;
+  position: relative;
+  display: block;
+  color: #61ca59;
+  width: 0px;
+  height: 0px;
+  border-right: 10px solid transparent;
+  border-bottom: 7px solid;
+  border-bottom-color: #dadada;
+  border-left: 10px solid transparent;
+  transform: rotate(35deg);
+}
+li.task .star:before {
+  border-bottom: 8px solid;
+  border-bottom-color: #dadada;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  position: absolute;
+  height: 0;
+  width: 0;
+  top: -5px;
+  left: -6px;
+  display: block;
+  content: '';
+  transform: rotate(-35deg);
+}
+li.task .star:after {
+  position: absolute;
+  display: block;
+  color: #61ca59;
+  top: 0px;
+  left: -10px;
+  width: 0px;
+  height: 0px;
+  border-right: 10px solid transparent;
+  border-bottom: 7px solid;
+  border-bottom-color: #dadada;
+  border-left: 10px solid transparent;
+  transform: rotate(-70deg);
+  content: '';
+}
+li.task .star.next {
+  border-bottom-color: #61ca59;
+}
+li.task .star.next:before {
+  border-bottom-color: #61ca59;
+}
+li.task .star.next:after {
+  border-bottom-color: #61ca59;
+}
+
+li.projectLink.x84ecaf:before { background-color: #84ecaf; }
+li.projectLink.xcddc39:before { background-color: #cddc39; }
+li.projectLink.x29e271:before { background-color: #29e271; }
+li.projectLink.xaeb4bf:before { background-color: #aeb4bf; }
+li.projectLink.x65808E:before { background-color: #65808E; }
+li.projectLink.x7ADBEC:before { background-color: #7ADBEC; }
+li.projectLink.x00B0FF:before { background-color: #00b0ff; }
+li.projectLink.xffc24a:before { background-color: #ffc24a; }
+li.projectLink.xFF9800:before { background-color: #FF9800; }
+li.projectLink.xedcf9a:before { background-color: #edcf9a; }
+li.projectLink.xc96d3f:before { background-color: #c96d3f; }
+li.projectLink.xff947f:before { background-color: #ff947f; }
+li.projectLink.xFF5252:before { background-color: #FF5252; }
+li.projectLink.xFF61CF:before { background-color: #FF61CF; }
+li.projectLink.xC555F9:before { background-color: #C555F9; }
