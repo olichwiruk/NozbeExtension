@@ -37,7 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ul.appendChild(liNextAction)
         liNextAction.id = "next_action"
         liNextAction.classList.add('projectLink')
-        liNextAction.innerHTML = liNextAction.innerHTML + "Priorytety"
+        const name = document.createElement('div')
+        name.classList.add('name')
+        name.innerHTML = "Priorytety"
+        liNextAction.appendChild(name)
         const number = document.createElement('span')
         number.classList.add('tasksNumber')
         liNextAction.appendChild(number)
