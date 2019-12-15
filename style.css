@@ -99,7 +99,7 @@ li.projectLink:before {
   -moz-border-radius: 7.5px;
   -webkit-border-radius: 7.5px;
   border-radius: 7.5px;
-  background-color: #3d4047;
+  background-color: #27343b;
 }
 li.projectLink:hover:before {
   width: 12px;
@@ -112,21 +112,55 @@ li.projectLink.shared {
 
 li.task {
   list-style-type: none;
-  padding: 10px 15px;
+  padding: 10px 10px;
   border-bottom: 1px solid;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 li.task:nth-child(1) {
   border-top: 1px solid #dadada;
 }
+li.task .state {
+  border: 1px solid #27343b;
+  border-radius: 13px;
+  min-height: 20px;
+  min-width: 20px;
+}
+li.task .state:hover:before, li.task.completed .state:before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 1px;
+  transform: translateX(3px) translateY(2px) rotate(50deg);
+  background-color: #27343b;
+}
+li.task .state:hover:after, li.task.completed .state:after {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 1px;
+  transform: translateX(-1px) translateY(-1px) rotate(-63deg);
+  background-color: #27343b;
+}
+li.task.completed .state {
+  border-color: #848484;
+}
+li.task.completed .state:before, li.task.completed .state:after  {
+  background-color: #848484;
+}
+
+li.task .content {
+  flex-grow: 2;
+  margin-left: 10px;
+}
+
 li.todo {
   background-color: #ffffff;
   border-color: #dadada;
 }
 li.completed {
-  text-decoration: line-through;
-  color: #848484;
+  color: #959595;
   background-color: #f9f9f9;
   border-color: #e7e7e7;
 }

@@ -119,11 +119,16 @@ document.addEventListener('DOMContentLoaded', () => {
               return 0
             }).forEach(t => {
               const li = document.createElement('li')
+              const state = document.createElement('div')
+              state.classList.add('state')
+              li.appendChild(state)
               const content = document.createElement('div')
+              content.classList.add('content')
+              li.appendChild(content)
               const star = document.createElement('div')
               star.classList.add('star')
-              li.appendChild(content)
               li.appendChild(star)
+
               ul.appendChild(li)
               li.id = t.id
               li.classList.add('task')
@@ -146,12 +151,16 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('click', (e) => {
     if ((e.target.classList.contains('task') || 
          e.target.parentElement.classList.contains('task')) &&
-        !e.target.classList.contains('star')
-    ) {
+        !e.target.classList.contains('star') &&
+        !e.target.classList.contains('state')
+    ) { 
       let target = e.target
       if (e.target.parentElement.classList.contains('task')) {
         target = e.target.parentElement
       }
+      console.log(target)
+    } else if (e.target.classList.contains('state')) {
+      const target = e.target.parentElement
       const taskId = target.id
       const completed = !target.classList.contains('completed')
       const reqTask = new XMLHttpRequest();
