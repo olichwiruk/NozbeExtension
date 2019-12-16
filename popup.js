@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         liNextAction.classList.add('projectLink')
         const name = document.createElement('div')
         name.classList.add('name')
-        name.innerHTML = "Priorytety"
+        name.innerHTML = "Prioryty"
         liNextAction.appendChild(name)
         const number = document.createElement('span')
         number.classList.add('tasksNumber')
