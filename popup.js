@@ -15,10 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const loadApp = () => {
     let projectId
+    let taskId
 
-    chrome.storage.sync.get(['projectId', 'projectName'], r => {
-      if (r.projectId) {
-        projectId = r.projectId
+    chrome.storage.sync.get(['taskId', 'projectId', 'projectName'], r => {
+      taskId = r.taskId
+      projectId = r.projectId
+      if (taskId) {
+        openTask(r.taskId)
+      } else if (projectId) {
         openProject(r.projectId, r.projectName)
       }
     })
@@ -137,6 +141,11 @@ document.addEventListener('DOMContentLoaded', () => {
               }
               li.classList.add(t.completed ? 'completed' : 'todo')
               content.innerHTML = t.name
+              if (t.comments && t.comments.length) {
+                content.innerHTML = content.innerHTML + ` [${t.comments.length}]`
+              } else if (t._comment_count && t._comment_count > 0) {
+                content.innerHTML = content.innerHTML + ` [${t._comment_count}]`
+              }
             })
           const projectResult = document.querySelector(".project .result")
           projectResult.innerHTML = ul.innerHTML
@@ -148,17 +157,116 @@ document.addEventListener('DOMContentLoaded', () => {
     reqProject.send()
   }
 
+  const openTask = (id, task = null) => {
+    chrome.storage.sync.set({taskId: id})
+    chrome.storage.sync.get(['projectId', 'projectName'], r => {
+      projectId = r.projectId
+      document.querySelector(".taskView .projectName").innerHTML = r.projectName
+    })
+    document.querySelector(".projectList").style.display = "none"
+    document.querySelector(".back").style.visibility = "visible"
+    document.querySelector(".back .arrow").style.visibility = "visible"
+    document.querySelector(".project").style.display = "none"
+    document.querySelector(".taskView").style.display = "block"
+
+    const taskInfo = document.querySelector(".taskView .taskInfo")
+
+    if (task) {
+      const li = document.createElement('li')
+      const state = document.createElement('div')
+      state.classList.add('state')
+      li.appendChild(state)
+      const content = document.createElement('div')
+      content.classList.add('content')
+      li.appendChild(content)
+      const star = document.createElement('div')
+      star.classList.add('star')
+      li.appendChild(star)
+
+      li.id = id
+      li.classList.add('task')
+      if (task.next) {
+        star.classList.add('next')
+      }
+      li.classList.add(task.completed ? 'completed' : 'todo')
+      content.innerHTML = task.name
+      taskInfo.innerHTML = li.outerHTML
+    }
+
+    const commentContent = document.querySelector(".taskView .newCommentContent")
+    commentContent.focus()
+    commentContent.oninput = (e) => {
+      commentContent.style.height = 'auto'
+      commentContent.style.height = commentContent.scrollHeight + "px"
+    }
+
+    const reqTaskDet = new XMLHttpRequest();
+    reqTaskDet.open("GET", `${url}/task?id=${id}`, true);
+    reqTaskDet.setRequestHeader("AUTHORIZATION", token);
+    reqTaskDet.onreadystatechange = () => {
+      if(reqTaskDet.status == 200) {
+        const task = JSON.parse(reqTaskDet.responseText)
+
+        if (taskInfo.innerHTML == "") {
+          const li = document.createElement('li')
+          const state = document.createElement('div')
+          state.classList.add('state')
+          li.appendChild(state)
+          const content = document.createElement('div')
+          content.classList.add('content')
+          li.appendChild(content)
+          const star = document.createElement('div')
+          star.classList.add('star')
+          li.appendChild(star)
+
+          li.id = task.id
+          li.classList.add('task')
+          if (task.next) {
+            star.classList.add('next')
+          }
+          li.classList.add(task.completed ? 'completed' : 'todo')
+          content.innerHTML = task.name
+          taskInfo.innerHTML = li.outerHTML
+        }
+
+        const ul = document.createElement('ul')
+        task.comments.forEach((comment) => {
+          const li = document.createElement('li')
+          li.classList.add('comment')
+          const content = document.createElement('div')
+          content.classList.add('content')
+          li.appendChild(content)
+          const info = document.createElement('div')
+          info.classList.add('info')
+          li.appendChild(info)
+          content.innerHTML = comment.body
+          info.innerHTML = `${comment._user_name} - ${comment._created_at_s }`
+          ul.appendChild(li)
+        })
+
+        const taskResult = document.querySelector(".taskView .result")
+        taskResult.innerHTML = ul.innerHTML
+      }
+    }
+    reqTaskDet.send()
+  }
+
   document.addEventListener('click', (e) => {
     if ((e.target.classList.contains('task') || 
          e.target.parentElement.classList.contains('task')) &&
         !e.target.classList.contains('star') &&
         !e.target.classList.contains('state')
-    ) { 
+    ) {
       let target = e.target
       if (e.target.parentElement.classList.contains('task')) {
         target = e.target.parentElement
       }
-      console.log(target)
+      if (!target.parentElement.classList.contains('taskInfo')) {
+        const completed = target.classList.contains('completed')
+        const name = target.querySelector('.content').innerHTML
+        const next = target.querySelector('.star').classList.contains('next')
+        openTask(target.id, { next, completed, name })
+      }
     } else if (e.target.classList.contains('state')) {
       const target = e.target.parentElement
       const taskId = target.id
@@ -208,16 +316,33 @@ document.addEventListener('DOMContentLoaded', () => {
       reqAddTask.send(`name=${taskName}&project_id=${projectId}`)
     } else if (e.target.classList.contains('back') ||
                e.target.parentElement.classList.contains('back')) {
-      document.querySelector(".project").style.display = "none"
-      document.querySelector(".back").style.visibility = "hidden"
-      document.querySelector(".back .arrow").style.visibility = "hidden"
-      const projectResult = document.querySelector(".project .result")
-      projectResult.innerHTML = ""
-      chrome.storage.sync.set({projectId: null, projectName: null})
-      document.querySelector(".projectList").style.display = "block"
-      calculateNextActionsNumber()
+      let taskId, projectId, projectName
+      chrome.storage.sync.get(['taskId', 'projectId', 'projectName'], r => {
+        taskId = r.taskId
+        projectId = r.projectId
+        projectName = r.projectName
+
+        if (taskId) {
+          document.querySelector(".taskView").style.display = "none"
+          const taskResult = document.querySelector(".taskView .result")
+          taskResult.innerHTML = ""
+          const taskInfo = document.querySelector(".taskView .taskInfo")
+          taskInfo.innerHTML = ""
+          chrome.storage.sync.set({taskId: null})
+          openProject(projectId, projectName)
+        } else if (projectId) {
+          document.querySelector(".project").style.display = "none"
+          document.querySelector(".back").style.visibility = "hidden"
+          document.querySelector(".back .arrow").style.visibility = "hidden"
+          const projectResult = document.querySelector(".project .result")
+          projectResult.innerHTML = ""
+          chrome.storage.sync.set({projectId: null, projectName: null})
+          document.querySelector(".projectList").style.display = "block"
+          calculateNextActionsNumber()
+        }
+      })
     } else if (e.target.classList.contains('btnLogout')) {
-      chrome.storage.sync.set({ token: null })
+      chrome.storage.sync.set({ token: null, projectId: null, projectName: null, taskId: null })
       document.querySelector(".projectList .result").innerHTML = "Loged out"
     } else if (e.target.classList.contains('title')) {
       chrome.tabs.create({ url: nozbeAppHref });

@@ -76,7 +76,48 @@ body {
   cursor: pointer;
 }
 
-li {
+ul.taskInfo {
+  padding: 0;
+}
+
+textarea.newCommentContent {
+  font-family: inherit;
+  resize: none;
+  min-width: 98%;
+  color: #151515;
+  border: 1px solid #c7c7c7;
+  border-radius: 3px;
+}
+textarea.newCommentContent:focus {
+  outline-color: #61ca59;
+}
+.btnSendComment {
+  float: right;
+  border: 1px solid #575757;
+  border-radius: 2px;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  background-color: #62cd63;
+  height: 100%;
+}
+.btnSendComment:hover {
+  cursor: pointer;
+}
+
+li.comment {
+  list-style-type: none;
+  border: 1px solid #575757;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+}
+li.comment .info {
+  padding-top: 15px;
+  color: #676767;
+}
+
+li.task, li.projectLink {
   padding: 2px 0;
   cursor: pointer;
 }
@@ -232,6 +273,10 @@ li.task .star.next:before {
 }
 li.task .star.next:after {
   border-bottom-color: #61ca59;
+}
+
+.taskView {
+  display: none;
 }
 
 li.projectLink.x84ecaf:before { background-color: #84ecaf; }
