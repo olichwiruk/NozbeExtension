@@ -21,6 +21,10 @@ body {
 .back:focus {
   outline:0;
 }
+.back:focus .arrow, .back:hover .arrow {
+  color: #373737;
+}
+
 .back .arrow {
   vertical-align: middle;
   box-sizing: border-box;
