@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reqProjectList.open("GET", `${url}/list?type=project`, true);
     reqProjectList.setRequestHeader("AUTHORIZATION", token);
     reqProjectList.onreadystatechange = () => {
-      if(reqProjectList.status == 200){
+      if(reqProjectList.readyState == 4 && reqProjectList.status == 200) {
         const projects = JSON.parse(reqProjectList.responseText).map(p => {
           return { id: p.id, name: p.name, color: p._color, sort: p._sort, shared: p._shared == "y", tasksNumber: p._count }
         })
@@ -75,8 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         const projectListResult = document.querySelector(".projectList .result")
         projectListResult.innerHTML = ul.innerHTML
-      } else {
-        alert(reqProjectList.status)
       }
     }
     reqProjectList.send()
@@ -87,8 +85,11 @@ document.addEventListener('DOMContentLoaded', () => {
     reqNextActionNumber.open("GET", `${url}/tasks?type=next_action`, true);
     reqNextActionNumber.setRequestHeader("AUTHORIZATION", token);
     reqNextActionNumber.onreadystatechange = () => {
-      document.querySelector("li#next_action .tasksNumber")
-        .innerHTML = JSON.parse(reqNextActionNumber.responseText).length
+      if (reqNextActionNumber.readyState == 4 &&
+        reqNextActionNumber.status == 200) {
+        document.querySelector("li#next_action .tasksNumber")
+          .innerHTML = JSON.parse(reqNextActionNumber.responseText).length
+      }
     }
     reqNextActionNumber.send()
   }
@@ -114,44 +115,40 @@ document.addEventListener('DOMContentLoaded', () => {
     reqProject.onreadystatechange = () => {
       const ul = document.createElement('ul')
 
-      if (reqProject.readyState == 4) {
-        if(reqProject.status == 200){
-          JSON.parse(reqProject.responseText)
-            .sort((a, b) => {
-              if (a.completed < b.completed) { return -1 }
-              if (a.completed > b.completed) { return 1 }
-              return 0
-            }).forEach(t => {
-              const li = document.createElement('li')
-              const state = document.createElement('div')
-              state.classList.add('state')
-              li.appendChild(state)
-              const content = document.createElement('div')
-              content.classList.add('content')
-              li.appendChild(content)
-              const star = document.createElement('div')
-              star.classList.add('star')
-              li.appendChild(star)
+      if (reqProject.readyState == 4 && reqProject.status == 200) {
+        JSON.parse(reqProject.responseText)
+          .sort((a, b) => {
+            if (a.completed < b.completed) { return -1 }
+            if (a.completed > b.completed) { return 1 }
+            return 0
+          }).forEach(t => {
+            const li = document.createElement('li')
+            const state = document.createElement('div')
+            state.classList.add('state')
+            li.appendChild(state)
+            const content = document.createElement('div')
+            content.classList.add('content')
+            li.appendChild(content)
+            const star = document.createElement('div')
+            star.classList.add('star')
+            li.appendChild(star)
 
-              ul.appendChild(li)
-              li.id = t.id
-              li.classList.add('task')
-              if (t.next) {
-                star.classList.add('next')
-              }
-              li.classList.add(t.completed ? 'completed' : 'todo')
-              content.innerHTML = t.name
-              if (t.comments && t.comments.length) {
-                content.innerHTML = content.innerHTML + ` [${t.comments.length}]`
-              } else if (t._comment_count && t._comment_count > 0) {
-                content.innerHTML = content.innerHTML + ` [${t._comment_count}]`
-              }
-            })
-          const projectResult = document.querySelector(".project .result")
-          projectResult.innerHTML = ul.innerHTML
-        } else {
-          console.log(reqProject.responseText)
-        }
+            ul.appendChild(li)
+            li.id = t.id
+            li.classList.add('task')
+            if (t.next) {
+              star.classList.add('next')
+            }
+            li.classList.add(t.completed ? 'completed' : 'todo')
+            content.innerHTML = t.name
+            if (t.comments && t.comments.filter(c => !c.deleted).length > 0) {
+              content.innerHTML = content.innerHTML + ` [${t.comments.filter(c => !c.deleted).length}]`
+            } else if (projectId == 'next_action' && t._comment_count > 0) {
+              content.innerHTML = content.innerHTML + ` [${t._comment_count}]`
+            }
+          })
+        const projectResult = document.querySelector(".project .result")
+        projectResult.innerHTML = ul.innerHTML
       }
     };
     reqProject.send()
@@ -204,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reqTaskDet.open("GET", `${url}/task?id=${id}`, true);
     reqTaskDet.setRequestHeader("AUTHORIZATION", token);
     reqTaskDet.onreadystatechange = () => {
-      if(reqTaskDet.status == 200) {
+      if(reqTaskDet.readyState == 4 && reqTaskDet.status == 200) {
         const task = JSON.parse(reqTaskDet.responseText)
 
         if (taskInfo.innerHTML == "") {
