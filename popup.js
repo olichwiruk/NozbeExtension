@@ -155,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const openTask = (id, task = null) => {
+    taskId = id
     chrome.storage.sync.set({taskId: id})
     chrome.storage.sync.get(['projectId', 'projectName'], r => {
       projectId = r.projectId
@@ -227,19 +228,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const ul = document.createElement('ul')
-        task.comments.forEach((comment) => {
-          const li = document.createElement('li')
-          li.classList.add('comment')
-          const content = document.createElement('div')
-          content.classList.add('content')
-          li.appendChild(content)
-          const info = document.createElement('div')
-          info.classList.add('info')
-          li.appendChild(info)
-          content.innerHTML = comment.body
-          info.innerHTML = `${comment._user_name} - ${comment._created_at_s }`
-          ul.appendChild(li)
-        })
+        if (task.comments) {
+          task.comments.sort((a, b) => {
+              if (a.pinned) return -1
+              if (b.pinned) return 1
+              if (a._created_at_gmt > b._created_at_gmt) return -1
+              else if (a._created_at_gmt < b._created_at_gmt) return 1
+              return 0
+          }).forEach((comment) => {
+            const li = document.createElement('li')
+            li.classList.add('comment')
+            if (comment.deleted) { li.classList.add('deleted') }
+            if (comment.pinned) { li.classList.add('pinned') }
+            const content = document.createElement('div')
+            content.classList.add('content')
+            li.appendChild(content)
+            const info = document.createElement('div')
+            info.classList.add('info')
+            li.appendChild(info)
+            content.innerHTML = comment.body
+            info.innerHTML = `${comment._user_name} - ${comment._created_at_s }`
+            ul.appendChild(li)
+          })
+        }
 
         const taskResult = document.querySelector(".taskView .result")
         taskResult.innerHTML = ul.innerHTML
@@ -338,6 +349,15 @@ document.addEventListener('DOMContentLoaded', () => {
           calculateNextActionsNumber()
         }
       })
+    } else if (e.target.classList.contains('btnSendComment')) {
+      const taskId = document.querySelector(".taskView .taskInfo .task").id
+      const commentText = document.querySelector(".newCommentContent").value
+      const commentType = "markdown"
+      const reqAddComment = new XMLHttpRequest();
+
+      reqAddComment.open("POST", `${url}/task/comment`, false);
+      reqAddComment.setRequestHeader("AUTHORIZATION", token);
+      reqAddComment.send(`body=${commentText}&task_id=${taskId}&type=${commentType}`)
     } else if (e.target.classList.contains('btnLogout')) {
       chrome.storage.sync.set({ token: null, projectId: null, projectName: null, taskId: null })
       document.querySelector(".projectList .result").innerHTML = "Loged out"
