@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           })
         const projectResult = document.querySelector(".project .result")
-        projectResult.innerHTML = ul.innerHTML || ''
+        projectResult.innerHTML = ul.outerHTML || ''
         chrome.storage.sync.set({tasksList: projectResult.innerHTML})
       }
     };
