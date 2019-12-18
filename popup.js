@@ -17,13 +17,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let projectId
     let taskId
 
-    chrome.storage.sync.get(['taskId', 'projectId', 'projectName'], r => {
+    chrome.storage.sync.get(['taskId', 'projectId', 'projectName', 'projectsList', 'tasksList', 'taskInfo', 'commentsList'], r => {
       taskId = r.taskId
       projectId = r.projectId
       if (taskId) {
+        document.querySelector(".taskView .taskInfo").innerHTML = r.taskInfo
+        document.querySelector(".taskView .result").innerHTML = r.commentsList
         openTask(r.taskId)
       } else if (projectId) {
-        openProject(r.projectId, r.projectName)
+        document.querySelector(".project .result").innerHTML = r.tasksList
+        openProject(r.projectId, r.projectName || '')
+      } else if (r.projectsList) {
+        document.querySelector(".projectList .result").innerHTML = r.projectsList
       }
     })
 
@@ -74,7 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
           li.appendChild(number)
         })
         const projectListResult = document.querySelector(".projectList .result")
-        projectListResult.innerHTML = ul.innerHTML
+        projectListResult.innerHTML = ul.innerHTML || ''
+        chrome.storage.sync.set({projectsList: projectListResult.innerHTML})
       }
     }
     reqProjectList.send()
@@ -101,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector(".back").style.visibility = "visible"
     document.querySelector(".back .arrow").style.visibility = "visible"
     document.querySelector(".project").style.display = "block"
-    document.querySelector(".projectName").innerHTML = name
+    document.querySelector(".projectName").innerHTML = name || ''
     document.querySelector(".project .name").focus()
 
     const reqProject = new XMLHttpRequest();
@@ -148,7 +154,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           })
         const projectResult = document.querySelector(".project .result")
-        projectResult.innerHTML = ul.innerHTML
+        projectResult.innerHTML = ul.innerHTML || ''
+        chrome.storage.sync.set({tasksList: projectResult.innerHTML})
       }
     };
     reqProject.send()
@@ -159,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     chrome.storage.sync.set({taskId: id})
     chrome.storage.sync.get(['projectId', 'projectName'], r => {
       projectId = r.projectId
-      document.querySelector(".taskView .projectName").innerHTML = r.projectName
+      document.querySelector(".taskView .projectName").innerHTML = r.projectName || ''
     })
     document.querySelector(".projectList").style.display = "none"
     document.querySelector(".back").style.visibility = "visible"
@@ -253,7 +260,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const taskResult = document.querySelector(".taskView .result")
-        taskResult.innerHTML = ul.innerHTML
+        taskResult.innerHTML = ul.innerHTML || ''
+        chrome.storage.sync.set({taskInfo: taskInfo.innerHTML, commentsList: taskResult.innerHTML})
       }
     }
     reqTaskDet.send()
@@ -312,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target.parentElement.classList.contains('projectLink')) {
         target = e.target.parentElement
       }
-      const projectName = target.querySelector(".name").innerHTML
+      const projectName = target.querySelector(".name").innerHTML || ''
       openProject(target.id, projectName)
     } else if (e.target.classList.contains('btnSend')) {
       let taskName = document.querySelector(".project .name").value
@@ -328,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
       chrome.storage.sync.get(['taskId', 'projectId', 'projectName'], r => {
         taskId = r.taskId
         projectId = r.projectId
-        projectName = r.projectName
+        projectName = r.projectName || ''
 
         if (taskId) {
           document.querySelector(".taskView").style.display = "none"
@@ -359,7 +367,14 @@ document.addEventListener('DOMContentLoaded', () => {
       reqAddComment.setRequestHeader("AUTHORIZATION", token);
       reqAddComment.send(`body=${commentText}&task_id=${taskId}&type=${commentType}`)
     } else if (e.target.classList.contains('btnLogout')) {
-      chrome.storage.sync.set({ token: null, projectId: null, projectName: null, taskId: null })
+      chrome.storage.sync.set({
+        token: null, projectId: null, projectName: null,
+        taskId: null, projectsList: null, tasksList: null,
+        taskInfo: null, commentsList: null
+      })
+      document.querySelector(".projectList").style.display = "block"
+      document.querySelector(".project").style.display = "none"
+      document.querySelector(".taskView").style.display = "none"
       document.querySelector(".projectList .result").innerHTML = "Loged out"
     } else if (e.target.classList.contains('title')) {
       chrome.tabs.create({ url: nozbeAppHref });
