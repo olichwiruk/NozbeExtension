@@ -93,8 +93,11 @@ document.addEventListener('DOMContentLoaded', () => {
     reqNextActionNumber.onreadystatechange = () => {
       if (reqNextActionNumber.readyState == 4 &&
         reqNextActionNumber.status == 200) {
-        document.querySelector("li#next_action .tasksNumber")
-          .innerHTML = JSON.parse(reqNextActionNumber.responseText).length
+        document.querySelector(
+          "li#next_action .tasksNumber"
+        ).innerHTML = JSON.parse(
+          reqNextActionNumber.responseText
+        ).filter(t => !t.completed).length
       }
     }
     reqNextActionNumber.send()
