@@ -93,11 +93,17 @@ document.addEventListener('DOMContentLoaded', () => {
     reqNextActionNumber.onreadystatechange = () => {
       if (reqNextActionNumber.readyState == 4 &&
         reqNextActionNumber.status == 200) {
-        document.querySelector(
-          "li#next_action .tasksNumber"
-        ).innerHTML = JSON.parse(
-          reqNextActionNumber.responseText
-        ).filter(t => !t.completed).length
+        const numberOfNextActions = JSON.parse(reqNextActionNumber.responseText)
+          .filter(t => !t.completed).length
+        document.querySelector("li#next_action .tasksNumber")
+          .innerHTML = numberOfNextActions
+
+        chrome.browserAction.setBadgeBackgroundColor({
+          color: [0, 150, 0, 255]
+        });
+        chrome.browserAction.setBadgeText({
+          text: String(numberOfNextActions)
+        });
       }
     }
     reqNextActionNumber.send()
@@ -296,7 +302,9 @@ document.addEventListener('DOMContentLoaded', () => {
       reqTask.open("PUT", `${url}/task`, true);
       reqTask.setRequestHeader("AUTHORIZATION", token);
       reqTask.onreadystatechange = () => {
-        if(reqTask.status != 200) {
+        if(reqTask.readyState == 4 && reqTask.status == 200) {
+          calculateNextActionsNumber()
+        } else if(reqTask.status != 200) {
           target.classList.toggle('completed')
           target.classList.toggle('todo')
           alert(reqTask.responseText)
@@ -311,7 +319,9 @@ document.addEventListener('DOMContentLoaded', () => {
       reqNextAction.open("PUT", `${url}/task`, true);
       reqNextAction.setRequestHeader("AUTHORIZATION", token);
       reqNextAction.onreadystatechange = () => {
-        if(reqNextAction.status != 200) {
+        if(reqNextAction.readyState == 4 && reqNextAction.status == 200) {
+          calculateNextActionsNumber()
+        } else if(reqNextAction.status != 200) {
           e.target.classList.toggle('next')
           alert(reqNextAction.responseText)
         }
