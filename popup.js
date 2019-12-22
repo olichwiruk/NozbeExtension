@@ -15,11 +15,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const loadApp = () => {
     let projectId
+    let taskId
 
-    chrome.storage.sync.get(['projectId', 'projectName'], r => {
-      if (r.projectId) {
-        projectId = r.projectId
-        openProject(r.projectId, r.projectName)
+    chrome.storage.sync.get(['taskId', 'projectId', 'projectName', 'projectsList', 'tasksList', 'taskInfo', 'commentsList'], r => {
+      taskId = r.taskId
+      projectId = r.projectId
+      if (taskId) {
+        document.querySelector(".taskView .taskInfo").innerHTML = r.taskInfo
+        document.querySelector(".taskView .result").innerHTML = r.commentsList
+        openTask(r.taskId)
+      } else if (projectId) {
+        document.querySelector(".project .result").innerHTML = r.tasksList
+        openProject(r.projectId, r.projectName || '')
+      } else if (r.projectsList) {
+        document.querySelector(".projectList .result").innerHTML = r.projectsList
       }
     })
 
@@ -27,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reqProjectList.open("GET", `${url}/list?type=project`, true);
     reqProjectList.setRequestHeader("AUTHORIZATION", token);
     reqProjectList.onreadystatechange = () => {
-      if(reqProjectList.status == 200){
+      if(reqProjectList.readyState == 4 && reqProjectList.status == 200) {
         const projects = JSON.parse(reqProjectList.responseText).map(p => {
           return { id: p.id, name: p.name, color: p._color, sort: p._sort, shared: p._shared == "y", tasksNumber: p._count }
         })
@@ -37,7 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ul.appendChild(liNextAction)
         liNextAction.id = "next_action"
         liNextAction.classList.add('projectLink')
-        liNextAction.innerHTML = liNextAction.innerHTML + "Priorytety"
+        const name = document.createElement('div')
+        name.classList.add('name')
+        name.innerHTML = "Prioryty"
+        liNextAction.appendChild(name)
         const number = document.createElement('span')
         number.classList.add('tasksNumber')
         liNextAction.appendChild(number)
@@ -67,9 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
           li.appendChild(number)
         })
         const projectListResult = document.querySelector(".projectList .result")
-        projectListResult.innerHTML = ul.innerHTML
-      } else {
-        alert(reqProjectList.status)
+        projectListResult.innerHTML = ul.innerHTML || ''
+        chrome.storage.sync.set({projectsList: projectListResult.innerHTML})
       }
     }
     reqProjectList.send()
@@ -80,8 +91,20 @@ document.addEventListener('DOMContentLoaded', () => {
     reqNextActionNumber.open("GET", `${url}/tasks?type=next_action`, true);
     reqNextActionNumber.setRequestHeader("AUTHORIZATION", token);
     reqNextActionNumber.onreadystatechange = () => {
-      document.querySelector("li#next_action .tasksNumber")
-        .innerHTML = JSON.parse(reqNextActionNumber.responseText).length
+      if (reqNextActionNumber.readyState == 4 &&
+        reqNextActionNumber.status == 200) {
+        const numberOfNextActions = JSON.parse(reqNextActionNumber.responseText)
+          .filter(t => !t.completed).length
+        document.querySelector("li#next_action .tasksNumber")
+          .innerHTML = numberOfNextActions
+
+        chrome.browserAction.setBadgeBackgroundColor({
+          color: [0, 150, 0, 255]
+        });
+        chrome.browserAction.setBadgeText({
+          text: String(numberOfNextActions)
+        });
+      }
     }
     reqNextActionNumber.send()
   }
@@ -90,10 +113,11 @@ document.addEventListener('DOMContentLoaded', () => {
     projectId = id
     chrome.storage.sync.set({projectId: id, projectName: name})
     document.querySelector(".projectList").style.display = "none"
+    document.querySelector(".taskView").style.display = "none"
     document.querySelector(".back").style.visibility = "visible"
     document.querySelector(".back .arrow").style.visibility = "visible"
     document.querySelector(".project").style.display = "block"
-    document.querySelector(".projectName").innerHTML = name
+    document.querySelector(".projectName").innerHTML = name || ''
     document.querySelector(".project .name").focus()
 
     const reqProject = new XMLHttpRequest();
@@ -107,48 +131,216 @@ document.addEventListener('DOMContentLoaded', () => {
     reqProject.onreadystatechange = () => {
       const ul = document.createElement('ul')
 
-      if (reqProject.readyState == 4) {
-        if(reqProject.status == 200){
-          JSON.parse(reqProject.responseText)
-            .sort((a, b) => {
-              if (a.completed < b.completed) { return -1 }
-              if (a.completed > b.completed) { return 1 }
-              return 0
-            }).forEach(t => {
-              const li = document.createElement('li')
-              const content = document.createElement('div')
-              const star = document.createElement('div')
-              star.classList.add('star')
-              li.appendChild(content)
-              li.appendChild(star)
-              ul.appendChild(li)
-              li.id = t.id
-              li.classList.add('task')
-              if (t.next) {
-                star.classList.add('next')
+      if (reqProject.readyState == 4 && reqProject.status == 200) {
+        JSON.parse(reqProject.responseText)
+          .sort((a, b) => {
+            if (a.completed < b.completed) { return -1 }
+            if (a.completed > b.completed) { return 1 }
+            return 0
+          }).forEach(t => {
+            const li = document.createElement('li')
+            const state = document.createElement('div')
+            state.classList.add('state')
+            li.appendChild(state)
+            const content = document.createElement('div')
+            content.classList.add('content')
+            li.appendChild(content)
+            const info = document.createElement('div')
+            info.classList.add('info')
+            const star = document.createElement('div')
+            star.classList.add('star')
+            li.appendChild(star)
+
+            ul.appendChild(li)
+            li.id = t.id
+            li.classList.add('task')
+            if (t.next) {
+              star.classList.add('next')
+            }
+            li.classList.add(t.completed ? 'completed' : 'todo')
+            content.innerHTML = t.name
+            if (t.comments && t.comments.filter(c => !c.deleted).length > 0) {
+              content.innerHTML = content.innerHTML + ` [${t.comments.filter(c => !c.deleted).length}]`
+            } else if (projectId == 'next_action' && t._comment_count > 0) {
+              content.innerHTML = content.innerHTML + ` [${t._comment_count}]`
+            }
+
+            content.appendChild(info)
+            if (projectId == 'next_action') {
+              const span = document.createElement('span')
+              span.classList.add('projectLink')
+              span.classList.add('x'+t._project_color)
+              const name = document.createElement('div')
+              name.classList.add('name')
+              name.style.display = "inline"
+              span.appendChild(name)
+
+              span.id = t.project_id
+              name.innerHTML = t._project_name
+              info.innerHTML = info.innerHTML + span.outerHTML + ' | '
+            }
+            if (t._time_s) { 
+              const span = document.createElement('span')
+              span.classList.add('time')
+              span.innerHTML = t._time_s
+              info.innerHTML = info.innerHTML + span.outerHTML + ' | '
+            }
+            // if (t.recur) {
+            //   const span = document.createElement('span')
+            //   span.classList.add('recur')
+            //   span.innerHTML = t._recur_name
+            //   info.innerHTML = info.innerHTML + span.outerHTML + ' | '
+            // }
+            if (t.datetime) {
+              const span = document.createElement('span')
+              span.classList.add('datetime')
+              if (new Date(t.datetime).getTime() < Date.now()) {
+                span.classList.add('overdated')
               }
-              li.classList.add(t.completed ? 'completed' : 'todo')
-              content.innerHTML = t.name
-            })
-          const projectResult = document.querySelector(".project .result")
-          projectResult.innerHTML = ul.innerHTML
-        } else {
-          console.log(reqProject.responseText)
-        }
+              span.innerHTML = t._datetime_s
+              info.innerHTML = info.innerHTML + span.outerHTML + ' | '
+            }
+            info.innerHTML = info.innerHTML.slice(0, -2)
+          })
+        const projectResult = document.querySelector(".project .result")
+        projectResult.innerHTML = ul.outerHTML || ''
+        chrome.storage.sync.set({tasksList: projectResult.innerHTML})
       }
     };
     reqProject.send()
   }
 
+  const openTask = (id, task = null) => {
+    taskId = id
+    chrome.storage.sync.set({taskId: id})
+    chrome.storage.sync.get(['projectId', 'projectName'], r => {
+      projectId = r.projectId
+      document.querySelector(".taskView .projectName").innerHTML = r.projectName || ''
+    })
+    document.querySelector(".projectList").style.display = "none"
+    document.querySelector(".back").style.visibility = "visible"
+    document.querySelector(".back .arrow").style.visibility = "visible"
+    document.querySelector(".project").style.display = "none"
+    document.querySelector(".taskView").style.display = "block"
+
+    const taskInfo = document.querySelector(".taskView .taskInfo")
+
+    if (task) {
+      const li = document.createElement('li')
+      const state = document.createElement('div')
+      state.classList.add('state')
+      li.appendChild(state)
+      const content = document.createElement('div')
+      content.classList.add('content')
+      li.appendChild(content)
+      const star = document.createElement('div')
+      star.classList.add('star')
+      li.appendChild(star)
+
+      li.id = id
+      li.classList.add('task')
+      if (task.next) {
+        star.classList.add('next')
+      }
+      li.classList.add(task.completed ? 'completed' : 'todo')
+      content.innerHTML = task.name
+      taskInfo.innerHTML = li.outerHTML
+    }
+
+    const commentContent = document.querySelector(".taskView .newCommentContent")
+    commentContent.focus()
+    commentContent.oninput = (e) => {
+      commentContent.style.height = 'auto'
+      commentContent.style.height = commentContent.scrollHeight + "px"
+    }
+
+    const reqTaskDet = new XMLHttpRequest();
+    reqTaskDet.open("GET", `${url}/task?id=${id}`, true);
+    reqTaskDet.setRequestHeader("AUTHORIZATION", token);
+    reqTaskDet.onreadystatechange = () => {
+      if(reqTaskDet.readyState == 4 && reqTaskDet.status == 200) {
+        const task = JSON.parse(reqTaskDet.responseText)
+
+        if (taskInfo.innerHTML == "") {
+          const li = document.createElement('li')
+          const state = document.createElement('div')
+          state.classList.add('state')
+          li.appendChild(state)
+          const content = document.createElement('div')
+          content.classList.add('content')
+          li.appendChild(content)
+          const star = document.createElement('div')
+          star.classList.add('star')
+          li.appendChild(star)
+
+          li.id = task.id
+          li.classList.add('task')
+          if (task.next) {
+            star.classList.add('next')
+          }
+          li.classList.add(task.completed ? 'completed' : 'todo')
+          content.innerHTML = task.name
+          taskInfo.innerHTML = li.outerHTML
+        }
+
+        const ul = document.createElement('ul')
+        if (task.comments) {
+          task.comments.sort((a, b) => {
+              if (a.pinned) return -1
+              if (b.pinned) return 1
+              if (a._created_at_gmt > b._created_at_gmt) return -1
+              else if (a._created_at_gmt < b._created_at_gmt) return 1
+              return 0
+          }).forEach((comment) => {
+            const li = document.createElement('li')
+            li.classList.add('comment')
+            if (comment.deleted) { li.classList.add('deleted') }
+            if (comment.pinned) { li.classList.add('pinned') }
+            const content = document.createElement('div')
+            content.classList.add('content')
+            li.appendChild(content)
+            const info = document.createElement('div')
+            info.classList.add('info')
+            li.appendChild(info)
+            content.innerHTML = comment.body
+            info.innerHTML = `${comment._user_name} - ${comment._created_at_s }`
+            ul.appendChild(li)
+          })
+        }
+
+        const taskResult = document.querySelector(".taskView .result")
+        taskResult.innerHTML = ul.innerHTML || ''
+        chrome.storage.sync.set({taskInfo: taskInfo.innerHTML, commentsList: taskResult.innerHTML})
+      }
+    }
+    reqTaskDet.send()
+  }
+
   document.addEventListener('click', (e) => {
-    if ((e.target.classList.contains('task') || 
-         e.target.parentElement.classList.contains('task')) &&
-        !e.target.classList.contains('star')
+    if ((e.target.classList.contains('task') ||
+         e.target.parentElement.classList.contains('task') ||
+         e.target.parentElement.parentElement.parentElement.classList.contains('task') ||
+         e.target.parentElement.parentElement.classList.contains('task')) &&
+        !e.target.classList.contains('star') &&
+        !e.target.classList.contains('projectLink') &&
+        !e.target.classList.contains('state')
     ) {
       let target = e.target
       if (e.target.parentElement.classList.contains('task')) {
         target = e.target.parentElement
+      } else if (e.target.parentElement.parentElement.classList.contains('task')) {
+        target = e.target.parentElement.parentElement
+      } else if (e.target.parentElement.parentElement.parentElement.classList.contains('task')) {
+        target = e.target.parentElement.parentElement.parentElement
       }
+      if (!target.parentElement.classList.contains('taskInfo')) {
+        const completed = target.classList.contains('completed')
+        const name = target.querySelector('.content').innerHTML
+        const next = target.querySelector('.star').classList.contains('next')
+        openTask(target.id, { next, completed, name })
+      }
+    } else if (e.target.classList.contains('state')) {
+      const target = e.target.parentElement
       const taskId = target.id
       const completed = !target.classList.contains('completed')
       const reqTask = new XMLHttpRequest();
@@ -157,7 +349,9 @@ document.addEventListener('DOMContentLoaded', () => {
       reqTask.open("PUT", `${url}/task`, true);
       reqTask.setRequestHeader("AUTHORIZATION", token);
       reqTask.onreadystatechange = () => {
-        if(reqTask.status != 200) {
+        if(reqTask.readyState == 4 && reqTask.status == 200) {
+          calculateNextActionsNumber()
+        } else if(reqTask.status != 200) {
           target.classList.toggle('completed')
           target.classList.toggle('todo')
           alert(reqTask.responseText)
@@ -172,7 +366,9 @@ document.addEventListener('DOMContentLoaded', () => {
       reqNextAction.open("PUT", `${url}/task`, true);
       reqNextAction.setRequestHeader("AUTHORIZATION", token);
       reqNextAction.onreadystatechange = () => {
-        if(reqNextAction.status != 200) {
+        if(reqNextAction.readyState == 4 && reqNextAction.status == 200) {
+          calculateNextActionsNumber()
+        } else if(reqNextAction.status != 200) {
           e.target.classList.toggle('next')
           alert(reqNextAction.responseText)
         }
@@ -184,7 +380,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target.parentElement.classList.contains('projectLink')) {
         target = e.target.parentElement
       }
-      const projectName = target.querySelector(".name").innerHTML
+      document.querySelector(".project .result").innerHTML = ""
+      const projectName = target.querySelector(".name").innerHTML || ''
       openProject(target.id, projectName)
     } else if (e.target.classList.contains('btnSend')) {
       let taskName = document.querySelector(".project .name").value
@@ -196,16 +393,49 @@ document.addEventListener('DOMContentLoaded', () => {
       reqAddTask.send(`name=${taskName}&project_id=${projectId}`)
     } else if (e.target.classList.contains('back') ||
                e.target.parentElement.classList.contains('back')) {
-      document.querySelector(".project").style.display = "none"
-      document.querySelector(".back").style.visibility = "hidden"
-      document.querySelector(".back .arrow").style.visibility = "hidden"
-      const projectResult = document.querySelector(".project .result")
-      projectResult.innerHTML = ""
-      chrome.storage.sync.set({projectId: null, projectName: null})
-      document.querySelector(".projectList").style.display = "block"
-      calculateNextActionsNumber()
+      let taskId, projectId, projectName
+      chrome.storage.sync.get(['taskId', 'projectId', 'projectName'], r => {
+        taskId = r.taskId
+        projectId = r.projectId
+        projectName = r.projectName || ''
+
+        if (taskId) {
+          document.querySelector(".taskView").style.display = "none"
+          const taskResult = document.querySelector(".taskView .result")
+          taskResult.innerHTML = ""
+          const taskInfo = document.querySelector(".taskView .taskInfo")
+          taskInfo.innerHTML = ""
+          chrome.storage.sync.set({taskId: null})
+          openProject(projectId, projectName)
+        } else if (projectId) {
+          document.querySelector(".project").style.display = "none"
+          document.querySelector(".back").style.visibility = "hidden"
+          document.querySelector(".back .arrow").style.visibility = "hidden"
+          const projectResult = document.querySelector(".project .result")
+          projectResult.innerHTML = ""
+          chrome.storage.sync.set({projectId: null, projectName: null})
+          document.querySelector(".projectList").style.display = "block"
+          calculateNextActionsNumber()
+        }
+      })
+    } else if (e.target.classList.contains('btnSendComment')) {
+      const taskId = document.querySelector(".taskView .taskInfo .task").id
+      const commentText = document.querySelector(".newCommentContent").value
+      const commentType = "markdown"
+      const reqAddComment = new XMLHttpRequest();
+
+      reqAddComment.open("POST", `${url}/task/comment`, false);
+      reqAddComment.setRequestHeader("AUTHORIZATION", token);
+      reqAddComment.send(`body=${commentText}&task_id=${taskId}&type=${commentType}`)
     } else if (e.target.classList.contains('btnLogout')) {
-      chrome.storage.sync.set({ token: null })
+      chrome.storage.sync.set({
+        token: null, projectId: null, projectName: null,
+        taskId: null, projectsList: null, tasksList: null,
+        taskInfo: null, commentsList: null
+      })
+      document.querySelector(".projectList").style.display = "block"
+      document.querySelector(".project").style.display = "none"
+      document.querySelector(".taskView").style.display = "none"
       document.querySelector(".projectList .result").innerHTML = "Loged out"
     } else if (e.target.classList.contains('title')) {
       chrome.tabs.create({ url: nozbeAppHref });

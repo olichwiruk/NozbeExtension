@@ -21,6 +21,10 @@ body {
 .back:focus {
   outline:0;
 }
+.back:focus .arrow, .back:hover .arrow {
+  color: #373737;
+}
+
 .back .arrow {
   vertical-align: middle;
   box-sizing: border-box;
@@ -72,7 +76,60 @@ body {
   cursor: pointer;
 }
 
-li {
+ul {
+  padding: 0;
+}
+
+textarea.newCommentContent {
+  font-family: inherit;
+  resize: none;
+  min-width: 98%;
+  color: #151515;
+  border: 1px solid #c7c7c7;
+  border-radius: 3px;
+}
+textarea.newCommentContent:focus {
+  outline-color: #61ca59;
+}
+.btnSendComment {
+  float: right;
+  border: 1px solid #575757;
+  border-radius: 2px;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  background-color: #62cd63;
+  height: 100%;
+}
+.btnSendComment:hover {
+  cursor: pointer;
+}
+
+li.comment {
+  list-style-type: none;
+  border: 1px solid #575757;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+}
+li.comment .info {
+  padding-top: 15px;
+  color: #676767;
+}
+
+li.comment.deleted {
+  border-color: #acacac;
+  color: #acacac;
+}
+li.comment.deleted .info {
+  color: #acacac;
+}
+
+li.comment.pinned {
+  border-style: dashed;
+}
+
+li.task, li.projectLink {
   padding: 2px 0;
   cursor: pointer;
 }
@@ -99,7 +156,7 @@ li.projectLink:before {
   -moz-border-radius: 7.5px;
   -webkit-border-radius: 7.5px;
   border-radius: 7.5px;
-  background-color: #3d4047;
+  background-color: #27343b;
 }
 li.projectLink:hover:before {
   width: 12px;
@@ -112,21 +169,92 @@ li.projectLink.shared {
 
 li.task {
   list-style-type: none;
-  padding: 10px 15px;
+  padding: 10px 10px;
   border-bottom: 1px solid;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 li.task:nth-child(1) {
   border-top: 1px solid #dadada;
 }
+li.task .state {
+  border: 1px solid #27343b;
+  border-radius: 13px;
+  min-height: 20px;
+  min-width: 20px;
+}
+li.task .state:hover:before, li.task.completed .state:before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 1px;
+  transform: translateX(3px) translateY(2px) rotate(50deg);
+  background-color: #27343b;
+}
+li.task .state:hover:after, li.task.completed .state:after {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 1px;
+  transform: translateX(-1px) translateY(-1px) rotate(-63deg);
+  background-color: #27343b;
+}
+li.task.completed .state {
+  border-color: #848484;
+}
+li.task.completed .state:before, li.task.completed .state:after  {
+  background-color: #848484;
+}
+
+li.task .content {
+  flex-grow: 2;
+  margin-left: 10px;
+}
+
+li.task .content .info {
+  color: #888888;
+}
+
+span.projectLink {
+  cursor: pointer;
+}
+span.projectLink:hover {
+  color: #454545;
+}
+span.projectLink:before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 7px;
+  border-radius: 7.5px;
+  background-color: #27343b;
+}
+
+li.projectLink.shared {
+  font-weight: 600;
+}
+
+li.task .content .info .datetime.overdated {
+  color: #ca4343;
+  font-weight: 600;
+}
+
+li.task.completed .content .info {
+  color: #cccccc;
+}
+li.task.completed .content .info .datetime.overdated {
+  color: #cccccc;
+  font-weight: 400;
+}
+
 li.todo {
   background-color: #ffffff;
   border-color: #dadada;
 }
 li.completed {
-  text-decoration: line-through;
-  color: #848484;
+  color: #959595;
   background-color: #f9f9f9;
   border-color: #e7e7e7;
 }
@@ -196,18 +324,22 @@ li.task .star.next:after {
   border-bottom-color: #61ca59;
 }
 
-li.projectLink.x84ecaf:before { background-color: #84ecaf; }
-li.projectLink.xcddc39:before { background-color: #cddc39; }
-li.projectLink.x29e271:before { background-color: #29e271; }
-li.projectLink.xaeb4bf:before { background-color: #aeb4bf; }
-li.projectLink.x65808E:before { background-color: #65808E; }
-li.projectLink.x7ADBEC:before { background-color: #7ADBEC; }
-li.projectLink.x00B0FF:before { background-color: #00b0ff; }
-li.projectLink.xffc24a:before { background-color: #ffc24a; }
-li.projectLink.xFF9800:before { background-color: #FF9800; }
-li.projectLink.xedcf9a:before { background-color: #edcf9a; }
-li.projectLink.xc96d3f:before { background-color: #c96d3f; }
-li.projectLink.xff947f:before { background-color: #ff947f; }
-li.projectLink.xFF5252:before { background-color: #FF5252; }
-li.projectLink.xFF61CF:before { background-color: #FF61CF; }
-li.projectLink.xC555F9:before { background-color: #C555F9; }
+.taskView {
+  display: none;
+}
+
+.projectLink.x84ecaf:before { background-color: #84ecaf; }
+.projectLink.xcddc39:before { background-color: #cddc39; }
+.projectLink.x29e271:before { background-color: #29e271; }
+.projectLink.xaeb4bf:before { background-color: #aeb4bf; }
+.projectLink.x65808E:before { background-color: #65808E; }
+.projectLink.x7ADBEC:before { background-color: #7ADBEC; }
+.projectLink.x00B0FF:before { background-color: #00b0ff; }
+.projectLink.xffc24a:before { background-color: #ffc24a; }
+.projectLink.xFF9800:before { background-color: #FF9800; }
+.projectLink.xedcf9a:before { background-color: #edcf9a; }
+.projectLink.xc96d3f:before { background-color: #c96d3f; }
+.projectLink.xff947f:before { background-color: #ff947f; }
+.projectLink.xFF5252:before { background-color: #FF5252; }
+.projectLink.xFF61CF:before { background-color: #FF61CF; }
+.projectLink.xC555F9:before { background-color: #C555F9; }
