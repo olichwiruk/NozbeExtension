@@ -212,6 +212,43 @@ li.task .content {
   margin-left: 10px;
 }
 
+li.task .content .info {
+  color: #888888;
+}
+
+span.projectLink {
+  cursor: pointer;
+}
+span.projectLink:hover {
+  color: #454545;
+}
+span.projectLink:before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 7px;
+  border-radius: 7.5px;
+  background-color: #27343b;
+}
+
+li.projectLink.shared {
+  font-weight: 600;
+}
+
+li.task .content .info .datetime.overdated {
+  color: #ca4343;
+  font-weight: 600;
+}
+
+li.task.completed .content .info {
+  color: #cccccc;
+}
+li.task.completed .content .info .datetime.overdated {
+  color: #cccccc;
+  font-weight: 400;
+}
+
 li.todo {
   background-color: #ffffff;
   border-color: #dadada;
@@ -291,18 +328,18 @@ li.task .star.next:after {
   display: none;
 }
 
-li.projectLink.x84ecaf:before { background-color: #84ecaf; }
-li.projectLink.xcddc39:before { background-color: #cddc39; }
-li.projectLink.x29e271:before { background-color: #29e271; }
-li.projectLink.xaeb4bf:before { background-color: #aeb4bf; }
-li.projectLink.x65808E:before { background-color: #65808E; }
-li.projectLink.x7ADBEC:before { background-color: #7ADBEC; }
-li.projectLink.x00B0FF:before { background-color: #00b0ff; }
-li.projectLink.xffc24a:before { background-color: #ffc24a; }
-li.projectLink.xFF9800:before { background-color: #FF9800; }
-li.projectLink.xedcf9a:before { background-color: #edcf9a; }
-li.projectLink.xc96d3f:before { background-color: #c96d3f; }
-li.projectLink.xff947f:before { background-color: #ff947f; }
-li.projectLink.xFF5252:before { background-color: #FF5252; }
-li.projectLink.xFF61CF:before { background-color: #FF61CF; }
-li.projectLink.xC555F9:before { background-color: #C555F9; }
+.projectLink.x84ecaf:before { background-color: #84ecaf; }
+.projectLink.xcddc39:before { background-color: #cddc39; }
+.projectLink.x29e271:before { background-color: #29e271; }
+.projectLink.xaeb4bf:before { background-color: #aeb4bf; }
+.projectLink.x65808E:before { background-color: #65808E; }
+.projectLink.x7ADBEC:before { background-color: #7ADBEC; }
+.projectLink.x00B0FF:before { background-color: #00b0ff; }
+.projectLink.xffc24a:before { background-color: #ffc24a; }
+.projectLink.xFF9800:before { background-color: #FF9800; }
+.projectLink.xedcf9a:before { background-color: #edcf9a; }
+.projectLink.xc96d3f:before { background-color: #c96d3f; }
+.projectLink.xff947f:before { background-color: #ff947f; }
+.projectLink.xFF5252:before { background-color: #FF5252; }
+.projectLink.xFF61CF:before { background-color: #FF61CF; }
+.projectLink.xC555F9:before { background-color: #C555F9; }

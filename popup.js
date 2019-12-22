@@ -113,6 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
     projectId = id
     chrome.storage.sync.set({projectId: id, projectName: name})
     document.querySelector(".projectList").style.display = "none"
+    document.querySelector(".taskView").style.display = "none"
     document.querySelector(".back").style.visibility = "visible"
     document.querySelector(".back .arrow").style.visibility = "visible"
     document.querySelector(".project").style.display = "block"
@@ -144,6 +145,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const content = document.createElement('div')
             content.classList.add('content')
             li.appendChild(content)
+            const info = document.createElement('div')
+            info.classList.add('info')
             const star = document.createElement('div')
             star.classList.add('star')
             li.appendChild(star)
@@ -161,6 +164,43 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (projectId == 'next_action' && t._comment_count > 0) {
               content.innerHTML = content.innerHTML + ` [${t._comment_count}]`
             }
+
+            content.appendChild(info)
+            if (projectId == 'next_action') {
+              const span = document.createElement('span')
+              span.classList.add('projectLink')
+              span.classList.add('x'+t._project_color)
+              const name = document.createElement('div')
+              name.classList.add('name')
+              name.style.display = "inline"
+              span.appendChild(name)
+
+              span.id = t.project_id
+              name.innerHTML = t._project_name
+              info.innerHTML = info.innerHTML + span.outerHTML + ' | '
+            }
+            if (t._time_s) { 
+              const span = document.createElement('span')
+              span.classList.add('time')
+              span.innerHTML = t._time_s
+              info.innerHTML = info.innerHTML + span.outerHTML + ' | '
+            }
+            // if (t.recur) {
+            //   const span = document.createElement('span')
+            //   span.classList.add('recur')
+            //   span.innerHTML = t._recur_name
+            //   info.innerHTML = info.innerHTML + span.outerHTML + ' | '
+            // }
+            if (t.datetime) {
+              const span = document.createElement('span')
+              span.classList.add('datetime')
+              if (new Date(t.datetime).getTime() < Date.now()) {
+                span.classList.add('overdated')
+              }
+              span.innerHTML = t._datetime_s
+              info.innerHTML = info.innerHTML + span.outerHTML + ' | '
+            }
+            info.innerHTML = info.innerHTML.slice(0, -2)
           })
         const projectResult = document.querySelector(".project .result")
         projectResult.innerHTML = ul.outerHTML || ''
@@ -277,14 +317,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.addEventListener('click', (e) => {
-    if ((e.target.classList.contains('task') || 
-         e.target.parentElement.classList.contains('task')) &&
+    if ((e.target.classList.contains('task') ||
+         e.target.parentElement.classList.contains('task') ||
+         e.target.parentElement.parentElement.parentElement.classList.contains('task') ||
+         e.target.parentElement.parentElement.classList.contains('task')) &&
         !e.target.classList.contains('star') &&
+        !e.target.classList.contains('projectLink') &&
         !e.target.classList.contains('state')
     ) {
       let target = e.target
       if (e.target.parentElement.classList.contains('task')) {
         target = e.target.parentElement
+      } else if (e.target.parentElement.parentElement.classList.contains('task')) {
+        target = e.target.parentElement.parentElement
+      } else if (e.target.parentElement.parentElement.parentElement.classList.contains('task')) {
+        target = e.target.parentElement.parentElement.parentElement
       }
       if (!target.parentElement.classList.contains('taskInfo')) {
         const completed = target.classList.contains('completed')
@@ -333,6 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target.parentElement.classList.contains('projectLink')) {
         target = e.target.parentElement
       }
+      document.querySelector(".project .result").innerHTML = ""
       const projectName = target.querySelector(".name").innerHTML || ''
       openProject(target.id, projectName)
     } else if (e.target.classList.contains('btnSend')) {
