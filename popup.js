@@ -29,6 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
         openProject(r.projectId, r.projectName || '')
       } else if (r.projectsList) {
         document.querySelector(".projectList .result").innerHTML = r.projectsList
+        chrome.browserAction.getBadgeText({}, (n) => {
+          document.querySelector("li#next_action .tasksNumber")
+            .innerHTML = n
+        })
       }
     })
 
@@ -87,6 +91,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const calculateNextActionsNumber = () => {
+    chrome.browserAction.getBadgeText({}, (n) => {
+      document.querySelector("li#next_action .tasksNumber")
+        .innerHTML = n
+    })
     const reqNextActionNumber = new XMLHttpRequest();
     reqNextActionNumber.open("GET", `${url}/tasks?type=next_action`, true);
     reqNextActionNumber.setRequestHeader("AUTHORIZATION", token);
