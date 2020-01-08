@@ -29,6 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
         openProject(r.projectId, r.projectName || '')
       } else if (r.projectsList) {
         document.querySelector(".projectList .result").innerHTML = r.projectsList
+        chrome.browserAction.getBadgeText({}, (n) => {
+          document.querySelector("li#next_action .tasksNumber")
+            .innerHTML = n
+        })
       }
     })
 
@@ -87,6 +91,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const calculateNextActionsNumber = () => {
+    chrome.browserAction.getBadgeText({}, (n) => {
+      document.querySelector("li#next_action .tasksNumber")
+        .innerHTML = n
+    })
     const reqNextActionNumber = new XMLHttpRequest();
     reqNextActionNumber.open("GET", `${url}/tasks?type=next_action`, true);
     reqNextActionNumber.setRequestHeader("AUTHORIZATION", token);
@@ -302,9 +310,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const info = document.createElement('div')
             info.classList.add('info')
             li.appendChild(info)
-            content.innerHTML = comment.body
             info.innerHTML = `${comment._user_name} - ${comment._created_at_s }`
             ul.appendChild(li)
+            if (comment.type == 'checklist') {
+              const checklist = comment.body.split(String.fromCharCode(10))
+              content.innerHTML = checklist.join('<br>')
+            } else {
+              content.innerHTML = comment.body
+            }
           })
         }
 
@@ -358,6 +371,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       reqTask.send(`id=${taskId}&completed=${completed}`)
+      chrome.storage.sync.set({taskInfo: target.outerHTML})
     } else if (e.target.classList.contains('star')) {
       const taskId = e.target.parentElement.id
       const next = !e.target.classList.contains('next')
@@ -374,6 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       reqNextAction.send(`id=${taskId}&next=${next}`)
+      chrome.storage.sync.set({taskInfo: e.target.parentElement.outerHTML})
     } else if (e.target.classList.contains('projectLink') ||
                e.target.parentElement.classList.contains('projectLink')) {
       let target = e.target
