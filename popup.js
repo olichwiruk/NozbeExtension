@@ -366,6 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       reqTask.send(`id=${taskId}&completed=${completed}`)
+      chrome.storage.sync.set({taskInfo: target.outerHTML})
     } else if (e.target.classList.contains('star')) {
       const taskId = e.target.parentElement.id
       const next = !e.target.classList.contains('next')
@@ -382,6 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       reqNextAction.send(`id=${taskId}&next=${next}`)
+      chrome.storage.sync.set({taskInfo: e.target.parentElement.outerHTML})
     } else if (e.target.classList.contains('projectLink') ||
                e.target.parentElement.classList.contains('projectLink')) {
       let target = e.target
