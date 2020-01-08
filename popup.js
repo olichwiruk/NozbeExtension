@@ -310,9 +310,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const info = document.createElement('div')
             info.classList.add('info')
             li.appendChild(info)
-            content.innerHTML = comment.body
             info.innerHTML = `${comment._user_name} - ${comment._created_at_s }`
             ul.appendChild(li)
+            if (comment.type == 'checklist') {
+              const checklist = comment.body.split(String.fromCharCode(10))
+              content.innerHTML = checklist.join('<br>')
+            } else {
+              content.innerHTML = comment.body
+            }
           })
         }
 
