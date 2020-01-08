@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
 
-  "name": "Nozbe Plugin",
-  "description": "",
-  "version": "1.0",
+  "name": "Nozbe Extension",
+  "description": "Manage your Nozbe projects with chrome browser",
+  "version": "0.0.1",
 
   "browser_action": {
     "default_icon": "nozbe.png",
