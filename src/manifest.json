@@ -6,13 +6,13 @@
   "version": "0.0.1",
 
   "browser_action": {
-    "default_icon": "nozbe.png",
-    "default_popup": "popup.html"
+    "default_icon": "icons/nozbe.png",
+    "default_popup": "popup/popup.html"
   },
   "background": {
-    "scripts": ["popup.js", "login.js"]
+    "scripts": ["popup/popup.js", "options/login.js"]
   },
-  "options_page": "options.html",
+  "options_page": "options/options.html",
   "permissions": [
     "storage",
     "identity"
