@@ -173,6 +173,8 @@ document.addEventListener('DOMContentLoaded', () => {
               content.innerHTML = content.innerHTML + ` [${t._comment_count}]`
             }
 
+            const sign = '&#8226;'
+
             content.appendChild(info)
             if (projectId == 'next_action') {
               const span = document.createElement('span')
@@ -185,13 +187,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
               span.id = t.project_id
               name.innerHTML = t._project_name
-              info.innerHTML = info.innerHTML + span.outerHTML + ' | '
+              info.innerHTML = `${info.innerHTML} ${span.outerHTML}  ${sign} `
             }
             if (t._time_s) { 
               const span = document.createElement('span')
               span.classList.add('time')
               span.innerHTML = t._time_s
-              info.innerHTML = info.innerHTML + span.outerHTML + ' | '
+              info.innerHTML = `${info.innerHTML} ${span.outerHTML}  ${sign} `
             }
             // if (t.recur) {
             //   const span = document.createElement('span')
@@ -206,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 span.classList.add('overdated')
               }
               span.innerHTML = t._datetime_s
-              info.innerHTML = info.innerHTML + span.outerHTML + ' | '
+              info.innerHTML = `${info.innerHTML} ${span.outerHTML}  ${sign} `
             }
             info.innerHTML = info.innerHTML.slice(0, -2)
           })
