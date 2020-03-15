@@ -1,39 +1,15 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Nozbe</title>
-    <script src="popup.js"></script>
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
-    <div class="header">
-      <button class="back">
-        <div class="arrow hidden"></div>
-      </button>
-      <h1 class="title">Nozbe</h1>
-      <button class="btnLogout">Logout</button>
-    </div>
-    <div class="projectList">
-      <div class="result"></div>
-    </div>
-    <div class="project">
-      <h2 class="projectName"></h2>
-      <form>
-        <input placeholder="Add task..." type="text" class="name"></input>
-        <button style="display: none" class="btnSend"></button>
-      </form>
-      <br>
-      <div class="result"></div>
-    </div>
-    <div class="taskView">
-      <h2 class="projectName"></h2>
-      <ul class="taskInfo"></ul>
-      <form>
-        <textarea rows="3" placeholder="Add comment..." class="newCommentContent"></textarea>
-        <button class="btnSendComment">Add</button>
-      </form>
-      <br>
-      <div class="result"></div>
-    </div>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nozbe</title>
+  <link rel="stylesheet" href="style.css">
+  <% if (NODE_ENV === 'development') { %>
+  <!-- Load some resources only in development environment -->
+  <% } %>
+</head>
+<body>
+  <div id="app"></div>
+  <script src="main.js"></script>
+</body>
 </html>

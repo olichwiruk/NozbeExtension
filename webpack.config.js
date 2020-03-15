@@ -11,6 +11,7 @@ const config = {
   context: __dirname + '/src',
   entry: {
     'popup/popup': './popup/popup.js',
+    'popup/main': './popup/main.js',
     'options/login': './options/login.js',
   },
   output: {
