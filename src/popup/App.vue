@@ -8,9 +8,7 @@
       <button class="btnLogout">Logout</button>
     </div>
 
-    <div class="projectList">
-      <div class="result"></div>
-    </div>
+    <project-list-view></project-list-view>
 
     <div class="project">
       <h2 class="projectName"></h2>
@@ -38,7 +36,12 @@
 <script>
 require("./popup.js")
 
+import ProjectListView from "./ProjectListView"
+
 export default {
+  components: {
+    ProjectListView
+  },
   data() {
     return {};
   },

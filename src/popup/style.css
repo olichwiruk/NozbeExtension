@@ -129,42 +129,9 @@ li.comment.pinned {
   border-style: dashed;
 }
 
-li.task, li.projectLink {
+li.task {
   padding: 2px 0;
   cursor: pointer;
-}
-li.projectLink {
-  list-style-type: none;
-  padding: 8px 10px;
-  font-size: 14px;
-}
-li.projectLink .tasksNumber {
-  float: right;
-  color: #888888;
-  font-weight: 400;
-}
-li.projectLink .name {
-  display: inline-block;
-  margin: 0;
-}
-li.projectLink:before {
-  content: '';
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  margin-right: 7px;
-  -moz-border-radius: 7.5px;
-  -webkit-border-radius: 7.5px;
-  border-radius: 7.5px;
-  background-color: #27343b;
-}
-li.projectLink:hover:before {
-  width: 12px;
-  height: 12px;
-}
-
-li.projectLink.shared {
-  font-weight: 600;
 }
 
 li.task {
@@ -230,10 +197,6 @@ span.projectLink:before {
   margin-right: 7px;
   border-radius: 7.5px;
   background-color: #27343b;
-}
-
-li.projectLink.shared {
-  font-weight: 600;
 }
 
 li.task .content .info .datetime.overdated {
@@ -327,19 +290,3 @@ li.task .star.next:after {
 .taskView {
   display: none;
 }
-
-.projectLink.x84ecaf:before { background-color: #84ecaf; }
-.projectLink.xcddc39:before { background-color: #cddc39; }
-.projectLink.x29e271:before { background-color: #29e271; }
-.projectLink.xaeb4bf:before { background-color: #aeb4bf; }
-.projectLink.x65808E:before { background-color: #65808E; }
-.projectLink.x7ADBEC:before { background-color: #7ADBEC; }
-.projectLink.x00B0FF:before { background-color: #00b0ff; }
-.projectLink.xffc24a:before { background-color: #ffc24a; }
-.projectLink.xFF9800:before { background-color: #FF9800; }
-.projectLink.xedcf9a:before { background-color: #edcf9a; }
-.projectLink.xc96d3f:before { background-color: #c96d3f; }
-.projectLink.xff947f:before { background-color: #ff947f; }
-.projectLink.xFF5252:before { background-color: #FF5252; }
-.projectLink.xFF61CF:before { background-color: #FF61CF; }
-.projectLink.xC555F9:before { background-color: #C555F9; }

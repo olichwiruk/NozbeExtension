@@ -3,7 +3,6 @@ import axios from "axios"
 document.addEventListener('DOMContentLoaded', () => {
   const url = "https://api.nozbe.com:3000"
   const nozbeAppHref = "https://app.nozbe.com"
-  const client_id = "648e384ad16f95a1a762bfc420580a5d96aaa08e"
   let token
 
   let projectId
@@ -30,63 +29,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector(".project .result").innerHTML = r.tasksList
         openProject(r.projectId, r.projectName || '')
       } else if (r.projectsList) {
-        document.querySelector(".projectList .result").innerHTML = r.projectsList
         chrome.browserAction.getBadgeText({}, (n) => {
           document.querySelector("li#next_action .tasksNumber")
             .innerHTML = n
         })
       }
-    })
-
-    axios.get(`${url}/list?type=project`, {
-      headers: {
-        "Authorization": token
-      }
-    }).then(response => {
-      const projects = response.data.map(p => {
-        return { id: p.id, name: p.name, color: p._color, sort: p._sort, shared: p._shared == "y", tasksNumber: p._count }
-      })
-
-      const ul = document.createElement('ul')
-      const liNextAction = document.createElement('li')
-      ul.appendChild(liNextAction)
-      liNextAction.id = "next_action"
-      liNextAction.classList.add('projectLink')
-      const name = document.createElement('div')
-      name.classList.add('name')
-      name.innerHTML = "Prioryty"
-      liNextAction.appendChild(name)
-      const number = document.createElement('span')
-      number.classList.add('tasksNumber')
-      liNextAction.appendChild(number)
-      calculateNextActionsNumber()
-
-      projects.sort((a, b) => {
-        if ( b.sort == 0 || a.sort > b.sort ){ return 1; }
-        if ( a.sort == 0 || a.sort < b.sort ){ return -1; }
-        return 0;
-      })
-      projects.forEach(p => {
-        const li = document.createElement('li')
-        ul.appendChild(li)
-        li.id = p.id
-        li.classList.add('projectLink')
-        if (p.shared) { li.classList.add('shared') }
-        if (p.color.length != 0) {
-          li.classList.add(`x${p.color}`)
-        }
-        const name = document.createElement('div')
-        name.classList.add('name')
-        name.innerHTML = p.name
-        li.appendChild(name)
-        const number = document.createElement('span')
-        number.classList.add('tasksNumber')
-        number.innerHTML = p.tasksNumber
-        li.appendChild(number)
-      })
-      const projectListResult = document.querySelector(".projectList .result")
-      projectListResult.innerHTML = ul.innerHTML || ''
-      chrome.storage.sync.set({projectsList: projectListResult.innerHTML})
     })
   }
 
