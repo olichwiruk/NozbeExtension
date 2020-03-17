@@ -26,8 +26,15 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector(".taskView .result").innerHTML = r.commentsList
         openTask(r.taskId)
       } else if (projectId) {
-        document.querySelector(".project .result").innerHTML = r.tasksList
-        openProject(r.projectId, r.projectName || '')
+        document.querySelector(".projectList").style.display = "none"
+        document.querySelector(".taskView").style.display = "none"
+        document.querySelector(".back").style.visibility = "visible"
+        document.querySelector(".back .arrow").style.visibility = "visible"
+        document.querySelector(".project").style.display = "block"
+        document.querySelector(".project .name").focus()
+
+        // document.querySelector(".project .result").innerHTML = r.tasksList
+        // openProject(r.projectId, r.projectName || '')
       } else if (r.projectsList) {
         chrome.browserAction.getBadgeText({}, (n) => {
           document.querySelector("li#next_action .tasksNumber")
@@ -70,98 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector(".back").style.visibility = "visible"
     document.querySelector(".back .arrow").style.visibility = "visible"
     document.querySelector(".project").style.display = "block"
-    document.querySelector(".projectName").innerHTML = name || ''
     document.querySelector(".project .name").focus()
-
-    let type
-    if (id == "next_action") {
-      type = "next_action"
-    } else {
-      type = `project&id=${id}`
-    }
-
-    axios.get(`${url}/tasks?type=${type}`, {
-      headers: {
-        "Authorization": token
-      }
-    }).then(response => {
-      const ul = document.createElement('ul')
-
-      response.data.sort((a, b) => {
-        if (a.completed < b.completed) { return -1 }
-        if (a.completed > b.completed) { return 1 }
-        return 0
-      }).forEach(t => {
-        const li = document.createElement('li')
-        const state = document.createElement('div')
-        state.classList.add('state')
-        li.appendChild(state)
-        const content = document.createElement('div')
-        content.classList.add('content')
-        li.appendChild(content)
-        const info = document.createElement('div')
-        info.classList.add('info')
-        const star = document.createElement('div')
-        star.classList.add('star')
-        li.appendChild(star)
-
-        ul.appendChild(li)
-        li.id = t.id
-        li.classList.add('task')
-        if (t.next) {
-          star.classList.add('next')
-        }
-        li.classList.add(t.completed ? 'completed' : 'todo')
-        content.innerHTML = t.name
-        if (t.comments && t.comments.filter(c => !c.deleted).length > 0) {
-          content.innerHTML = content.innerHTML + ` [${t.comments.filter(c => !c.deleted).length}]`
-        } else if (projectId == 'next_action' && t._comment_count > 0) {
-          content.innerHTML = content.innerHTML + ` [${t._comment_count}]`
-        }
-
-        const sign = '&#8226;'
-
-        content.appendChild(info)
-        if (projectId == 'next_action') {
-          const span = document.createElement('span')
-          span.classList.add('projectLink')
-          span.classList.add('x'+t._project_color)
-          const name = document.createElement('div')
-          name.classList.add('name')
-          name.style.display = "inline"
-          span.appendChild(name)
-
-          span.id = t.project_id
-          name.innerHTML = t._project_name
-          info.innerHTML = `${info.innerHTML} ${span.outerHTML}  ${sign} `
-        }
-        if (t._time_s) {
-          const span = document.createElement('span')
-          span.classList.add('time')
-          span.innerHTML = t._time_s
-          info.innerHTML = `${info.innerHTML} ${span.outerHTML}  ${sign} `
-        }
-        // if (t.recur) {
-        //   const span = document.createElement('span')
-        //   span.classList.add('recur')
-        //   span.innerHTML = t._recur_name
-        //   info.innerHTML = info.innerHTML + span.outerHTML + ' | '
-        // }
-        if (t.datetime) {
-          const span = document.createElement('span')
-          span.classList.add('datetime')
-          if (new Date(t.datetime).getTime() < Date.now()) {
-            span.classList.add('overdated')
-          }
-          span.innerHTML = t._datetime_s
-          info.innerHTML = `${info.innerHTML} ${span.outerHTML}  ${sign} `
-        }
-        info.innerHTML = info.innerHTML.slice(0, -2)
-      })
-      const projectResult = document.querySelector(".project .result")
-      projectResult.innerHTML = ul.outerHTML || ''
-      chrome.storage.sync.set({tasksList: projectResult.innerHTML})
-    })
   }
 
   const openTask = (id, task = null) => {
@@ -338,16 +254,12 @@ document.addEventListener('DOMContentLoaded', () => {
         target = e.target.parentElement
       }
       document.querySelector(".project .result").innerHTML = ""
-      const projectName = target.querySelector(".name").innerHTML || ''
-      openProject(target.id, projectName)
+      projectId = target.id
+      // openProject(target.id, projectName)
     } else if (e.target.classList.contains('btnSend')) {
       let taskName = document.querySelector(".project .name").value
       if (projectId == 'next_action') { taskName += " #!" }
 
-      const reqAddTask = new XMLHttpRequest();
-      reqAddTask.open("POST", `${url}/task`, false);
-      reqAddTask.setRequestHeader("AUTHORIZATION", token);
-      reqAddTask.send(`name=${taskName}&project_id=${projectId}`)
     } else if (e.target.classList.contains('back') ||
                e.target.parentElement.classList.contains('back')) {
       let taskId, projectId, projectName

@@ -6,6 +6,7 @@
         :key="project.id"
         :id="project.id"
         :shared="project.shared"
+        @click.native="openProject(project)"
         :color="project.color">
         {{ project.name }}
         <template v-slot:tasksNumber>
@@ -31,6 +32,11 @@ export default {
       projects: []
     };
   },
+  methods: {
+    openProject(project) {
+      this.$parent.openProject(project)
+    }
+  },
   beforeCreate() {
     chrome.storage.sync.get(['projectsList'], r => {
       if (r.projectsList) {
@@ -49,7 +55,7 @@ export default {
         return {
           id: p.id,
           name: p.name,
-          color: "x" + p._color,
+          color: p._color ? "x" + p._color : null,
           sort: p._sort,
           shared: p._shared == "y",
           tasksNumber: p._count
