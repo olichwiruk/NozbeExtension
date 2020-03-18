@@ -43,12 +43,14 @@ export default {
     },
     async addTask() {
       const token = await getToken()
+      if (this.project.id == 'next_action') {
+        this.taskName += " #!"
+      }
       axios.post(`${url}/task`, `name=${this.taskName}&project_id=${this.project.id}`, {
         headers: {
           "Authorization": token
         }
-      }
-      )
+      })
       this.taskName = ''
       this.synchronize()
     },
@@ -102,9 +104,21 @@ export default {
 
     this.$refs.taskInput.focus()
     this.fetchTasks()
-  }
+  },
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+  input {
+    box-sizing: border-box;
+    padding: 5px 5px;
+    width: 100%;
+    color: #151515;
+    border: 1px solid #c7c7c7;
+    border-radius: 3px;
+
+    &:focus {
+      outline-color: #61ca59;
+    }
+  }
 </style>

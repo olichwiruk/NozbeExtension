@@ -9,18 +9,8 @@
     </div>
 
     <project-list-view></project-list-view>
-    <project-view ref="projectView" :project="project"></project-view>
-
-    <div class="taskView">
-      <h2 class="projectName"></h2>
-      <ul class="taskInfo"></ul>
-      <form>
-        <textarea rows="3" placeholder="Add comment..." class="newCommentContent"></textarea>
-        <button class="btnSendComment">Add</button>
-      </form>
-      <br>
-      <div class="result"></div>
-    </div>
+    <project-view ref="projectView" :project="project || {}"></project-view>
+    <task-view ref="taskView" :project="project || {}" :task="task || {}"></task-view>
   </div>
 </template>
 
@@ -31,18 +21,18 @@ import axios from "axios"
 import { url, getToken } from "./shared"
 import ProjectListView from "./ProjectListView"
 import ProjectView from "./ProjectView"
+import TaskView from "./TaskView"
 
 export default {
   components: {
     ProjectListView,
-    ProjectView
+    ProjectView,
+    TaskView
   },
   data() {
     return {
-      project: {
-        id: null,
-        name: ''
-      }
+      project: null,
+      task: null
     };
   },
   methods: {
@@ -59,16 +49,34 @@ export default {
       document.querySelector(".back").style.visibility = "visible"
       document.querySelector(".back .arrow").style.visibility = "visible"
       document.querySelector(".project").style.display = "block"
-      document.querySelector(".project .name").focus()
-    }
+      this.$refs.projectView.$refs.taskInput.focus()
+    },
+    async openTask(task) {
+      const token = await getToken()
+      this.task = task
+      chrome.storage.sync.set({taskId: task.id})
+      this.$refs.taskView.comments = []
+      this.$refs.taskView.fetchComments()
+      chrome.storage.sync.set({taskInfo: task})
+      document.querySelector(".projectList").style.display = "none"
+      document.querySelector(".back").style.visibility = "visible"
+      document.querySelector(".back .arrow").style.visibility = "visible"
+      document.querySelector(".project").style.display = "none"
+      document.querySelector(".taskView").style.display = "block"
+
+      this.$refs.taskView.$refs.commentInput.focus()
+    },
   },
   beforeCreate() {
-    chrome.storage.sync.get(['projectId', 'projectName'], r => {
+    chrome.storage.sync.get(['projectId', 'projectName', 'taskInfo'], r => {
       if(r.projectId) {
         this.project = {
           id: r.projectId,
           name: r.projectName
         }
+      }
+      if(r.taskInfo) {
+        this.task = r.taskInfo
       }
     })
   }
