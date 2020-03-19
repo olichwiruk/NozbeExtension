@@ -18,7 +18,7 @@
 require("./popup.js")
 
 import axios from "axios"
-import { url, getToken } from "./shared"
+import { url, getToken, calculateNextActionsNumber } from "./shared"
 import ProjectListView from "./ProjectListView"
 import ProjectView from "./ProjectView"
 import TaskView from "./TaskView"
@@ -36,6 +36,38 @@ export default {
     };
   },
   methods: {
+    async loadApp() {
+      let nextActionsNumber
+      chrome.storage.sync.get(['taskId', 'projectId', 'projectName', 'projectsList', 'tasksList', 'taskInfo', 'commentsList'], async r => {
+        const taskId = r.taskId
+        const projectId = r.projectId
+
+        if (taskId) {
+          document.querySelector(".projectList").style.display = "none"
+          document.querySelector(".back").style.visibility = "visible"
+          document.querySelector(".back .arrow").style.visibility = "visible"
+          document.querySelector(".project").style.display = "none"
+          document.querySelector(".taskView").style.display = "block"
+
+          document.querySelector(".taskView .newCommentContent").focus()
+        } else if (projectId) {
+          document.querySelector(".projectList").style.display = "none"
+          document.querySelector(".taskView").style.display = "none"
+          document.querySelector(".back").style.visibility = "visible"
+          document.querySelector(".back .arrow").style.visibility = "visible"
+          document.querySelector(".project").style.display = "block"
+
+          document.querySelector(".project .name").focus()
+        } else {
+          nextActionsNumber = await calculateNextActionsNumber()
+          document.querySelector("li#next_action .tasksNumber")
+            .innerHTML = nextActionsNumber
+        }
+      })
+      if(!nextActionsNumber) {
+        await calculateNextActionsNumber()
+      }
+    },
     async openProject(project) {
       const token = await getToken()
       this.project = project
@@ -79,6 +111,13 @@ export default {
         this.task = r.taskInfo
       }
     })
+  },
+  async created() {
+    if(await getToken()) {
+      this.loadApp()
+    } else {
+      chrome.runtime.openOptionsPage()
+    }
   }
 };
 </script>

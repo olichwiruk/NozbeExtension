@@ -16,7 +16,7 @@
 
 <script>
 import axios from "axios"
-import { url, getToken } from "./shared"
+import { url, getToken, calculateNextActionsNumber } from "./shared"
 import TaskList from "./TaskList"
 
 export default {
@@ -50,7 +50,7 @@ export default {
         headers: {
           "Authorization": token
         }
-      })
+      }).then(async r => await calculateNextActionsNumber())
       this.taskName = ''
       this.synchronize()
     },

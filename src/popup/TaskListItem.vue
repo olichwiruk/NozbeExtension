@@ -34,7 +34,7 @@
 
 <script>
 import axios from "axios"
-import { url, getToken } from "./shared"
+import { url, getToken, calculateNextActionsNumber } from "./shared"
 
 export default {
   name: "task-list-item",
@@ -73,10 +73,12 @@ export default {
         headers: {
           "Authorization": token
         },
-      }).catch(e => {
-        this.task.next = !next
-        alert(e)
       })
+        .then(async r => await calculateNextActionsNumber())
+        .catch(e => {
+          this.task.next = !next
+          alert(e)
+        })
     },
     openProject() {
       this.$root.$children[0].openProject({
