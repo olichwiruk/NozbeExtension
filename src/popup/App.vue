@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :style="style">
     <div class="header">
       <back-button :target="backTarget"></back-button>
       <h1 class="title">Nozbe</h1>
@@ -27,6 +27,11 @@ export default {
       backTarget: null
     };
   },
+  computed: {
+    style() {
+      return 'min-width: 350px;'
+    }
+  },
   beforeCreate() {
     chrome.storage.sync.get(['projectId', 'projectName', 'taskInfo'], r => {
       if(r.projectId) {
@@ -52,7 +57,6 @@ export default {
 
 <style lang="scss">
   body {
-    min-width: 300px;
     min-height: 250px;
     background-color: #fafafa;
     color: #151515;
