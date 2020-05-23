@@ -143,8 +143,34 @@ export default {
 };
 </script>
 
-<style scoped>
-  ul {
-    padding: 0;
+<style lang="scss" scoped>
+  .projectName {
+    margin: 8px 0;
+    cursor: pointer;
+  }
+
+  .newCommentContent {
+    font-family: inherit;
+    resize: none;
+    min-width: 98%;
+    color: #151515;
+    border: 1px solid #c7c7c7;
+    border-radius: 3px;
+    outline-color: #61ca59;
+  }
+
+  .btnSendComment {
+    float: right;
+    border: 1px solid #575757;
+    border-radius: 2px;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    background-color: #62cd63;
+    height: 100%;
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 </style>

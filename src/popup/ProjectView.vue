@@ -143,6 +143,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .projectName {
+    margin: 8px 0;
+    cursor: pointer;
+  }
+
   input {
     box-sizing: border-box;
     padding: 5px 5px;

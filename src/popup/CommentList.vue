@@ -31,7 +31,20 @@ export default {
 </script>
 
 <style scoped>
-  ul {
-    padding: 0;
+  .comment {
+    list-style-type: none;
+    border: 1px solid #575757;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+  }
+
+  .comment.deleted {
+    border-color: #acacac;
+    color: #acacac;
+  }
+
+  .comment.pinned {
+    border-style: dashed;
   }
 </style>

@@ -42,7 +42,9 @@ export default {
   async created() {
     const token = await getToken()
     const nextActionsNumber = await browser.browserAction.getBadgeText({})
-    this.projects[0].tasksNumber = nextActionsNumber
+    if(this.projects.length > 0) {
+      this.projects[0].tasksNumber = nextActionsNumber || ''
+    }
 
     axios.get(`${url}/list?type=project`, {
       headers: {
@@ -75,7 +77,4 @@ export default {
 </script>
 
 <style scoped>
-  ul {
-    padding: 0;
-  }
 </style>

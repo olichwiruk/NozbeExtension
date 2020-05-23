@@ -26,5 +26,16 @@ export default {
     .content {
       white-space: pre-line;
     }
+
+    .info {
+      padding-top: 15px;
+      color: #676767;
+    }
+  }
+
+  .comment.deleted {
+    .info {
+      color: #acacac;
+    }
   }
 </style>

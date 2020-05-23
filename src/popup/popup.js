@@ -13,17 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 
   document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('btnLogout')) {
-      chrome.storage.sync.set({
-        token: null, projectId: null, projectName: null,
-        taskId: null, projectsList: null, tasksList: null,
-        taskInfo: null, commentsList: null
-      })
-      document.querySelector(".projectList").style.display = "block"
-      document.querySelector(".project").style.display = "none"
-      document.querySelector(".taskView").style.display = "none"
-      document.querySelector(".projectList .result").innerHTML = "Loged out"
-    } else if (e.target.classList.contains('title')) {
+    if (e.target.classList.contains('title')) {
       chrome.tabs.create({ url: nozbeAppHref });
     } else if (e.target.classList.contains('projectName')) {
       chrome.tabs.create({ url: `${nozbeAppHref}/#projects-${projectId}`});
