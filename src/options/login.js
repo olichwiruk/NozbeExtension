@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const url = "https://api.nozbe.com:3000"
-  const client_id = "648e384ad16f95a1a762bfc420580a5d96aaa08e"
+  const url = process.env.API_BASE_URL
+  const client_id = process.env.APP_CLIENT_ID
 
   chrome.storage.sync.get(['token'], r => {
     if (!r.token) {
