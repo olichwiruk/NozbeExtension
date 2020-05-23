@@ -29,6 +29,11 @@ export default {
   methods: {
     goBack() {
       this.$router.push(this.backTarget)
+      if(this.backTarget.name == 'project') {
+        chrome.storage.sync.set({taskId: null, task: null})
+      } else {
+        chrome.storage.sync.set({projectId: null, project: null})
+      }
       this.backTarget = null
     }
   },

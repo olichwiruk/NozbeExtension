@@ -104,6 +104,9 @@ export default {
     },
   },
   created() {
+
+  },
+  async mounted() {
     this.$parent.backTarget = {
       name: 'project',
       params: {
@@ -114,8 +117,6 @@ export default {
       }
     }
 
-  },
-  async mounted() {
     chrome.storage.sync.get(['project', 'commentsList'], r => {
       /*
       if (r.taskInfo) {
@@ -128,6 +129,8 @@ export default {
       }
       */
     })
+
+    chrome.storage.sync.set({ taskId: this.taskId, task: this.task })
 
     const token = await getToken()
     axios.get(`${url}/task?id=${this.taskId}`, {
