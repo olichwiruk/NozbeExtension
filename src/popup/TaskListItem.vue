@@ -12,7 +12,7 @@
       <div class="info">
 
         <router-link tag="span"
-          :to="{ name: 'project', params: { projectId: task.project_id } }"
+          :to="{ name: 'project', params: { projectId: task.project_id, projectProp: { id: task.project_id, name: task._project_name } } }"
           v-show="nextActions"
           :id="task.project_id"
           class="projectLink"
@@ -193,7 +193,6 @@ export default {
           height: 8px;
           margin-right: 7px;
           border-radius: 7.5px;
-          background-color: #27343b;
         }
       }
 

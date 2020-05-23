@@ -8,7 +8,7 @@
       <button class="btnLogout">Logout</button>
     </div>
 
-    <router-view></router-view>
+    <router-view :key="$route.fullPath"></router-view>
   </div>
 </template>
 
@@ -61,6 +61,7 @@ a {
   text-decoration: none;
 }
 .projectLink {
+  &:before { background-color: #27343b; }
   &.x84ecaf:before { background-color: #84ecaf; }
   &.xcddc39:before { background-color: #cddc39; }
   &.x29e271:before { background-color: #29e271; }
