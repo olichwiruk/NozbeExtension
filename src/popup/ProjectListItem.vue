@@ -1,17 +1,19 @@
 <template>
+    <router-link :to="{ name: 'project', params: { projectId: project.id, projectProp: project } }">
   <li class="projectLink"
     :class="[{ shared }, color]">
-    <div class="name"><slot /></div>
-    <span class="tasksNumber">
-      <slot name="tasksNumber" />
-    </span>
+      <div class="name"><slot /></div>
+      <span class="tasksNumber">
+        <slot name="tasksNumber" />
+      </span>
   </li>
+    </router-link>
 </template>
 
 <script>
 export default {
   name: "project-list-item",
-  props: ["shared", "color"],
+  props: ["shared", "color", "project"],
   data() {
     return {};
   }

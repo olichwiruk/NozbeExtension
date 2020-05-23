@@ -1,6 +1,6 @@
 <template>
   <div class="taskView">
-    <h2 class="projectName">{{ project.name }}</h2>
+    <h2 class="projectName">{{ task._project_name }}</h2>
     <ul class="taskInfo">
       <task-list-item :task="task" :nextActions="false"></task-list-item>
     </ul>
@@ -26,13 +26,14 @@ import CommentList from "./CommentList"
 
 export default {
   name: "task-view",
-  props: ["project", "task"],
+  props: ["projectId", "taskId", "taskProp"],
   components: {
     TaskListItem,
     CommentList
   },
   data() {
     return {
+      task: this.taskProp,
       comments: [],
       comment:  {
         body: "",
@@ -81,7 +82,6 @@ export default {
     },
     async addComment() {
       this.$refs.commentInput.focus()
-      this.$refs.commentInput.focus()
       const token = await getToken()
       axios.post(`${url}/task/comment`,
         `body=${this.comment.body}&task_id=${this.task.id}&type=${this.comment.type}`,
@@ -103,16 +103,43 @@ export default {
       }, 1000, this.fetchComments, this.comments)
     },
   },
-  mounted() {
-    chrome.storage.sync.get(['taskInfo', 'commentsList'], r => {
+  created() {
+    this.$parent.backTarget = {
+      name: 'project',
+      params: {
+        project: {
+          id: this.task.project_id,
+          name: this.task._project_name
+        }
+      }
+    }
+
+  },
+  async mounted() {
+    chrome.storage.sync.get(['project', 'commentsList'], r => {
+      /*
       if (r.taskInfo) {
         this.task = r.taskInfo
       }
+      */
+      /*
       if (r.commentsList) {
         this.comments = r.commentsList
       }
+      */
     })
 
+    const token = await getToken()
+    axios.get(`${url}/task?id=${this.taskId}`, {
+      headers: {
+        "Authorization": token
+      }
+    }).then(response => {
+      this.task = response.data
+      this.comments = this.task.comments
+    })
+
+    this.$refs.commentInput.focus()
     this.fetchComments()
   },
 };

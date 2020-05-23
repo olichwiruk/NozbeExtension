@@ -5,21 +5,23 @@
     :class="[{ todo: !task.completed }, { completed: task.completed }]"
     >
     <div class="state" @click="toggleState"></div>
-    <div class="content" @click="openTask">
+
+    <router-link tag="div" class="content" :to="{ name: 'task', params: { projectId: nextActions ? 'next_action' : task.project_id, taskId: task.id, taskProp: task } }">
       {{ task.name }}
       {{ task.comment_number > 0 ? ` [${task.comment_number}]` : "" }}
       <div class="info">
-        <span
+
+        <router-link tag="span"
+          :to="{ name: 'project', params: { projectId: task.project_id } }"
           v-show="nextActions"
           :id="task.project_id"
-          @click="openProject"
           class="projectLink"
           :class="['x'+task._project_color]">
           <div class="name" style="display: inline;">
-            {{ task._project_name }} 
+            {{ task._project_name }}
           </div>
           &#8226;
-        </span>
+        </router-link>
         <span class="time" v-show="task._time_s"> {{ task._time_s }} &#8226;</span>
         <span class="recur" v-show="task.recur != 0 && task.recur != 1405"> {{ task._recur_name }} &#8226;</span>
         <span v-show="task.datetime"
@@ -27,7 +29,7 @@
           :class="{ overdated: isOverdated }">
           {{ task._datetime_s }} </span>
       </div>
-    </div>
+    </router-link>
     <div class="star" :class="{ next: task.next }" @click="toggleNextAction"></div>
   </li>
 </template>
@@ -80,16 +82,7 @@ export default {
           alert(e)
         })
     },
-    openProject() {
-      this.$root.$children[0].openProject({
-        id: this.task.project_id,
-        name: this.task._project_name
-      })
-    },
-    openTask() {
-      this.$root.$children[0].openTask(this.task)
-    }
-  },
+  }
 };
 </script>
 

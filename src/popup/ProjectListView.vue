@@ -6,7 +6,7 @@
         :key="project.id"
         :id="project.id"
         :shared="project.shared"
-        @click.native="openProject(project)"
+        :project="project"
         :color="project.color">
         {{ project.name }}
         <template v-slot:tasksNumber>
@@ -32,11 +32,6 @@ export default {
       projects: []
     };
   },
-  methods: {
-    openProject(project) {
-      this.$parent.openProject(project)
-    }
-  },
   beforeCreate() {
     chrome.storage.sync.get(['projectsList'], r => {
       if (r.projectsList) {
@@ -46,6 +41,9 @@ export default {
   },
   async created() {
     const token = await getToken()
+    const nextActionsNumber = await browser.browserAction.getBadgeText({})
+    this.projects[0].tasksNumber = nextActionsNumber
+
     axios.get(`${url}/list?type=project`, {
       headers: {
         "Authorization": token
@@ -67,7 +65,7 @@ export default {
         return 0;
       })
       this.projects = [
-        { id: "next_action", name: "Prioryty" },
+        { id: "next_action", name: "Priority", tasksNumber: nextActionsNumber },
         ...projects
       ]
       chrome.storage.sync.set({projectsList: this.projects})

@@ -1,7 +1,7 @@
 <template>
   <div class="project">
     <h2 class="projectName">{{ project.name }}</h2>
-    <input 
+    <input
       type="text"
       class="name"
       ref="taskInput"
@@ -10,7 +10,6 @@
       placeholder="Add task..."></input>
     <br>
     <task-list :tasks="tasks"></task-list>
-    <div class="result"></div>
   </div>
 </template>
 
@@ -24,9 +23,10 @@ export default {
   components: {
     TaskList
   },
-  props: ["project"],
+  props: ["projectId", "projectProp"],
   data() {
     return {
+      project: this.projectProp || { id: this.projectId },
       taskName: '',
       tasks: []
     };
@@ -95,16 +95,43 @@ export default {
       })
     }
   },
-  mounted() {
-    chrome.storage.sync.get(['tasksList'], r => {
+  beforeCreate() {
+    chrome.storage.sync.get(['tasksList', 'projectId', 'projectName'], r => {
+      if(this.project.id != r.projectId) { return }
+      if (r.projectName) {
+        this.project.name = r.projectName
+      }
       if (r.tasksList) {
         this.tasks = r.tasksList
       }
     })
 
-    this.$refs.taskInput.focus()
-    this.fetchTasks()
+    this.$parent.backTarget = { name: 'projects' }
   },
+  async mounted() {
+    const token = await getToken()
+    axios.get(`${url}/project?id=${this.projectId}`, {
+      headers: {
+        "Authorization": token
+      }
+    }).then(response => {
+      const project = response.data
+      this.project = {
+        id: project.id,
+        name: project.name
+      }
+      chrome.storage.sync.set({
+        projectId: project.id,
+        projectName: project.name
+      })
+    })
+
+    this.fetchTasks()
+    this.$refs.taskInput.focus()
+  },
+  updated() {
+    this.$refs.taskInput.focus()
+  }
 }
 </script>
 

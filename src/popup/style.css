@@ -10,7 +10,6 @@ body {
 }
 
 .back {
-  visibility: hidden;
   padding-top: 3px;
   border: 0px;
   background-color: rgb(0, 0, 0, 0);
@@ -127,12 +126,4 @@ li.comment.deleted .info {
 
 li.comment.pinned {
   border-style: dashed;
-}
-
-.project {
-  display: none;
-}
-
-.taskView {
-  display: none;
 }
