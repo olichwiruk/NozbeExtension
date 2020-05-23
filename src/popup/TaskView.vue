@@ -14,7 +14,7 @@
     <button class="btnSendComment" @click="addComment">Add</button>
 
     <br><br>
-    <comment-list :comments="comments"></comment-list>
+    <comment-list :comments="sortedComments"></comment-list>
   </div>
 </template>
 
@@ -41,6 +41,17 @@ export default {
       }
     };
   },
+  computed: {
+    sortedComments() {
+      return this.comments.sort((a, b) => {
+        if (a.pinned) return -1
+        if (b.pinned) return 1
+        if (a._created_at_gmt > b._created_at_gmt) return -1
+        else if (a._created_at_gmt < b._created_at_gmt) return 1
+        return 0
+      })
+    }
+  },
   methods: {
     async fetchComments() {
       const token = await getToken()
@@ -51,13 +62,7 @@ export default {
       }).then(response => {
         const task = response.data
         if (task.comments) {
-          this.comments = task.comments.sort((a, b) => {
-            if (a.pinned) return -1
-            if (b.pinned) return 1
-            if (a._created_at_gmt > b._created_at_gmt) return -1
-            else if (a._created_at_gmt < b._created_at_gmt) return 1
-            return 0
-          }).map((comment) => {
+          this.comments = task.comments.map((comment) => {
             return {
               pinned: comment.pinned,
               deleted: comment.deleted,
@@ -103,9 +108,6 @@ export default {
       }, 1000, this.fetchComments, this.comments)
     },
   },
-  created() {
-
-  },
   async mounted() {
     this.$parent.backTarget = {
       name: 'project',
@@ -117,17 +119,10 @@ export default {
       }
     }
 
-    chrome.storage.sync.get(['project', 'commentsList'], r => {
-      /*
-      if (r.taskInfo) {
-        this.task = r.taskInfo
-      }
-      */
-      /*
+    chrome.storage.sync.get(['commentsList'], r => {
       if (r.commentsList) {
         this.comments = r.commentsList
       }
-      */
     })
 
     chrome.storage.sync.set({ taskId: this.taskId, task: this.task })
@@ -139,7 +134,7 @@ export default {
       }
     }).then(response => {
       this.task = response.data
-      this.comments = this.task.comments
+      this.comments = this.task.comments || []
     })
 
     this.$refs.commentInput.focus()

@@ -30,7 +30,7 @@ export default {
     goBack() {
       this.$router.push(this.backTarget)
       if(this.backTarget.name == 'project') {
-        chrome.storage.sync.set({taskId: null, task: null})
+        chrome.storage.sync.set({taskId: null, task: null, commentsList: []})
       } else {
         chrome.storage.sync.set({projectId: null, project: null})
       }
