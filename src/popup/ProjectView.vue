@@ -109,22 +109,29 @@ export default {
     this.$parent.backTarget = { name: 'projects' }
   },
   async mounted() {
-    const token = await getToken()
-    axios.get(`${url}/project?id=${this.projectId}`, {
-      headers: {
-        "Authorization": token
-      }
-    }).then(response => {
-      const project = response.data
-      this.project = {
-        id: project.id,
-        name: project.name
-      }
+    if(this.project.id == "next_action") {
       chrome.storage.sync.set({
-        projectId: project.id,
-        projectName: project.name
+        projectId: this.project.id,
+        projectName: 'Priority'
       })
-    })
+    } else {
+      const token = await getToken()
+      axios.get(`${url}/project?id=${this.projectId}`, {
+        headers: {
+          "Authorization": token
+        }
+      }).then(response => {
+        const project = response.data
+        this.project = {
+          id: project.id,
+          name: project.name
+        }
+        chrome.storage.sync.set({
+          projectId: project.id,
+          projectName: project.name
+        })
+      })
+    }
 
     this.fetchTasks()
     this.$refs.taskInput.focus()
