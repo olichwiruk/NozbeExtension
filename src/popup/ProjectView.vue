@@ -43,7 +43,7 @@ export default {
     },
     async addTask() {
       const token = await getToken()
-      if (this.project.id == 'next_action') {
+      if (this.project.id == 'next_action' && this.taskName.length > 0) {
         this.taskName += " #!"
       }
       axios.post(`${url}/task`, `name=${this.taskName}&project_id=${this.project.id}`, {
