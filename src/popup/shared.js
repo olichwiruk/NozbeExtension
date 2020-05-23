@@ -1,6 +1,6 @@
 import axios from "axios"
 
-export const url = "https://api.nozbe.com:3000"
+export const url = process.env.API_BASE_URL
 
 export const getToken = async () => {
   const result = await browser.storage.sync.get(['token'])

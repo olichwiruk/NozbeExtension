@@ -1,7 +1,6 @@
 import axios from "axios"
 
 document.addEventListener('DOMContentLoaded', () => {
-  const url = "https://api.nozbe.com:3000"
   const nozbeAppHref = "https://app.nozbe.com"
   let token
 
