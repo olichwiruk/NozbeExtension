@@ -1,6 +1,6 @@
 <template>
   <div class="project">
-    <h2 class="projectName">{{ project.name }}</h2>
+    <h2 @click="openProject" class="projectName">{{ project.name }}</h2>
     <input
       type="text"
       class="name"
@@ -15,7 +15,7 @@
 
 <script>
 import axios from "axios"
-import { url, getToken, calculateNextActionsNumber } from "./shared"
+import { url, nozbeAppHref, getToken, calculateNextActionsNumber } from "./shared"
 import TaskList from "./TaskList"
 
 export default {
@@ -93,6 +93,11 @@ export default {
         })
         chrome.storage.sync.set({tasksList: this.tasks})
       })
+    },
+    openProject() {
+      chrome.tabs.create({
+        url: `${nozbeAppHref}/#projects-${this.project.id}`
+      });
     }
   },
   beforeCreate() {

@@ -2,7 +2,7 @@
   <div :style="style">
     <div class="header">
       <back-button :target="backTarget"></back-button>
-      <h1 class="title">Nozbe</h1>
+      <h1 @click="openNozbe" class="title">Nozbe</h1>
       <logout-button />
     </div>
 
@@ -11,12 +11,10 @@
 </template>
 
 <script>
-require("./popup.js")
-
 import axios from "axios"
 import BackButton from './BackButton'
 import LogoutButton from './LogoutButton'
-import { url, getToken, calculateNextActionsNumber } from "./shared"
+import { url, nozbeAppHref, getToken, calculateNextActionsNumber } from "./shared"
 
 export default {
   components: { BackButton, LogoutButton },
@@ -30,6 +28,11 @@ export default {
   computed: {
     style() {
       return 'min-width: 350px;'
+    }
+  },
+  methods: {
+    openNozbe() {
+      chrome.tabs.create({ url: nozbeAppHref });
     }
   },
   beforeCreate() {

@@ -10,7 +10,7 @@
     "default_popup": "popup/popup.html"
   },
   "background": {
-    "scripts": ["popup/popup.js", "options/login.js"]
+    "scripts": ["options/login.js"]
   },
   "options_page": "options/options.html",
   "permissions": [

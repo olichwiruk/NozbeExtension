@@ -1,6 +1,6 @@
 <template>
   <div class="taskView">
-    <h2 class="projectName">{{ task._project_name }}</h2>
+    <h2 @click="openTask" class="projectName">{{ task._project_name }}</h2>
     <ul class="taskInfo">
       <task-list-item :task="task" :nextActions="false"></task-list-item>
     </ul>
@@ -20,7 +20,7 @@
 
 <script>
 import axios from "axios"
-import { url, getToken } from "./shared"
+import { url, nozbeAppHref, getToken } from "./shared"
 import TaskListItem from "./TaskListItem"
 import CommentList from "./CommentList"
 
@@ -97,6 +97,11 @@ export default {
         })
       this.comment.body = ''
       this.synchronize()
+    },
+    openTask() {
+      chrome.tabs.create({
+        url: `${nozbeAppHref}/#projects-${this.task.project_id}/task-${this.task.id}`
+      });
     },
     synchronize() {
       const commentsNumber = this.comments.length
