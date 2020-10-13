@@ -1,9 +1,9 @@
 {
   "name": "NozbeExtension",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Manage your Nozbe projects with chrome browser",
   "author": "olichwiruk",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "engines": {
     "node": ">=10"
   },

@@ -3,7 +3,7 @@
 
   "name": "Nozbe Extension",
   "description": "Manage your Nozbe projects with chrome browser",
-  "version": "0.0.1",
+  "version": "x.x.x",
 
   "browser_action": {
     "default_icon": "icons/nozbe.png",
