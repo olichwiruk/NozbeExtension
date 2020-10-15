@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const ExtensionReloader = require('webpack-extension-reloader');
 const { VueLoaderPlugin } = require('vue-loader');
+const { CheckerPlugin } = require('awesome-typescript-loader')
 const { version } = require('./package.json');
 
 const config = {
@@ -19,7 +20,7 @@ const config = {
     filename: '[name].js',
   },
   resolve: {
-    extensions: ['.js', '.vue'],
+    extensions: ['.js', '.vue', '.ts'],
   },
   module: {
     rules: [
@@ -31,6 +32,10 @@ const config = {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: /node_modules/,
+      },
+      {
+        test: /\.tsx?$/,
+        loader: 'awesome-typescript-loader'
       },
       {
         test: /\.css$/,
@@ -69,6 +74,7 @@ const config = {
       global: 'window',
     }),
     new Dotenv({ defaults: true }),
+    new CheckerPlugin(),
     new VueLoaderPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name].css',
