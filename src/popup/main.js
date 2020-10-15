@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import routes from './routes'
-import App from './App';
+import App from './components/App';
 
 global.browser = require('webextension-polyfill');
 Vue.prototype.$browser = global.browser;

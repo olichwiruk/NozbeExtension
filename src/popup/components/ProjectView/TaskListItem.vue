@@ -36,7 +36,7 @@
 
 <script>
 import axios from "axios"
-import { url, getToken, calculateNextActionsNumber } from "./shared"
+import { url, getToken, calculateNextActionsNumber } from "../../shared"
 
 export default {
   name: "task-list-item",

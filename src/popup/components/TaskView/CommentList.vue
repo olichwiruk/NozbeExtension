@@ -13,7 +13,7 @@
 
 <script>
 import axios from "axios"
-import { url, getToken } from "./shared"
+import { url, getToken } from "../../shared"
 import CommentListItem from "./CommentListItem"
 
 export default {
