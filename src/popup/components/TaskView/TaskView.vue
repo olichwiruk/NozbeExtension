@@ -20,8 +20,8 @@
 
 <script>
 import axios from "axios"
-import { url, nozbeAppHref, getToken } from "./shared"
-import TaskListItem from "./TaskListItem"
+import { url, nozbeAppHref, getToken } from "../../shared"
+import TaskListItem from "../ProjectView/TaskListItem"
 import CommentList from "./CommentList"
 
 export default {

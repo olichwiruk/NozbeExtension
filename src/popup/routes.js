@@ -1,6 +1,6 @@
-import ProjectListView from "./ProjectListView"
-import ProjectView from "./ProjectView"
-import TaskView from "./TaskView"
+import ProjectListView from "./components/ProjectListView/ProjectListView"
+import ProjectView from "./components/ProjectView/ProjectView"
+import TaskView from "./components/TaskView/TaskView"
 
 export default [
   { path: '/projects', name: 'projects', component: ProjectListView, },

@@ -12,9 +12,9 @@
 
 <script>
 import axios from "axios"
-import BackButton from './BackButton'
-import LogoutButton from './LogoutButton'
-import { url, nozbeAppHref, getToken, calculateNextActionsNumber } from "./shared"
+import BackButton from './Header/BackButton'
+import LogoutButton from './Header/LogoutButton'
+import { url, nozbeAppHref, getToken, calculateNextActionsNumber } from "../shared"
 
 export default {
   components: { BackButton, LogoutButton },

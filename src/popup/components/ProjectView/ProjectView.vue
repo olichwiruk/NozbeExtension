@@ -15,7 +15,7 @@
 
 <script>
 import axios from "axios"
-import { url, nozbeAppHref, getToken, calculateNextActionsNumber } from "./shared"
+import { url, nozbeAppHref, getToken, calculateNextActionsNumber } from "../../shared"
 import TaskList from "./TaskList"
 
 export default {
